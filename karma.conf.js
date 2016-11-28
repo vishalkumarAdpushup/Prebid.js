@@ -19,8 +19,8 @@ module.exports = function (config) {
 
     // BrowserStack Config
     browserStack: {
-      username: process.env.BROWSERSTACK_USERNAME,
-      accessKey: process.env.BROWSERSTACK_KEY
+      username: process.env.BROWSERSTACK_USERNAME || process.env.BROWSERSTACK_USER,
+      accessKey: process.env.BROWSERSTACK_KEY || process.env.BROWSERSTACK_ACCESS_KEY
     },
 
     // define browsers
