@@ -175,18 +175,12 @@ gulp.task('watch', function () {
     'src/**/*.js',
     'test/spec/**/*.js',
     '!test/spec/loaders/**/*.js'
-  ], ['quality', 'webpack', 'devpack', 'test']);
+  ], ['webpack']);
   gulp.watch([
     'loaders/**/*.js',
     'test/spec/loaders/**/*.js'
   ], ['quality', 'mocha']);
   gulp.watch(['integrationExamples/gpt/*.html'], ['test']);
-  connect.server({
-    https: argv.https,
-    port: port,
-    root: './',
-    livereload: true
-  });
 });
 
 gulp.task('quality', ['hint', 'jscs']);
