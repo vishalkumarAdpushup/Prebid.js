@@ -37,7 +37,7 @@ window.jsonPLoad = function ( url, callback, paramName ) {
 };
 
 var adpushupAdapter = function adpushupAdapter() {
-  function bidResponseHandler( bidRequest, _bidResponse ){
+  function bidResponseHandler( bidRequest, adSize, _bidResponse ){
 
     var bidResponse = _bidResponse.creativeList[0],
       bidObject;
@@ -47,8 +47,8 @@ var adpushupAdapter = function adpushupAdapter() {
       bidObject.bidderCode = bidRequest.bidder;
       bidObject.cpm = parseFloat(bidResponse.price);
       bidObject.ad = bidResponse.adm;
-      bidObject.width = bidResponse.width;
-      bidObject.height = bidResponse.height;
+      bidObject.width = bidResponse.width || adSize[0];
+      bidObject.height = bidResponse.height || adSize[1];
     } else {
       bidObject = bidfactory.createBid(2);
       bidObject.bidderCode = bidRequest.bidder;
@@ -59,10 +59,10 @@ var adpushupAdapter = function adpushupAdapter() {
 
   }
 
-  function makeBidRequest(paramObj, bidRequestObj){
+  function makeBidRequest(paramObj, bidRequestObj, adSize){
     var biddingUrl =  utils.replaceTokenInString( serverHostname + serverString, paramObj, '__');
 
-    window.jsonPLoad(biddingUrl, bidResponseHandler.bind(this, bidRequestObj));
+    window.jsonPLoad(biddingUrl, bidResponseHandler.bind(this, bidRequestObj, adSize));
   }
 
   function _callBids(params) {
@@ -91,7 +91,7 @@ var adpushupAdapter = function adpushupAdapter() {
         paramObj.SIZE_H = bid.sizes[1];
       }
 
-      makeBidRequest(paramObj, bid);
+      makeBidRequest(paramObj, bid, [paramObj.SIZE_W, paramObj.SIZE_H]);
 
     });
   }
