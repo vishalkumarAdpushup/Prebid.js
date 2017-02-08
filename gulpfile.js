@@ -9,6 +9,7 @@ var uglify = require('gulp-uglify');
 var jshint = require('gulp-jshint');
 var clean = require('gulp-clean');
 var karma = require('gulp-karma');
+var wrap = require('gulp-wrap');
 var mocha = require('gulp-mocha');
 var opens = require('open');
 var webpackConfig = require('./webpack.conf.js');
@@ -72,6 +73,7 @@ gulp.task('webpack', function () {
     .pipe(webpack(webpackConfig))
     .pipe(replace('$prebid.version$', prebid.version))
     .pipe(uglify())
+    .pipe(wrap('module.exports = (function(){ <%= contents %> });'))
     .pipe(header(banner, { prebid: prebid }))
     .pipe(gulp.dest('build/dist'))
     .pipe(connect.reload());
