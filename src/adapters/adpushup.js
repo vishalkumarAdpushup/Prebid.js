@@ -38,14 +38,14 @@ window.jsonPLoad = function ( url, callback, paramName ) {
 
 var adpushupAdapter = function adpushupAdapter() {
   function bidResponseHandler( bidRequest, _bidResponse ){
-    console.log( bidRequest, _bidResponse);
+
     var bidResponse = _bidResponse.creativeList[0],
       bidObject;
 
-    if(bidRequest && bidResponse.price > 0 && !!bidResponse.adm){
+    if(bidResponse && bidResponse.price > 0 && !!bidResponse.adm){
       bidObject = bidfactory.createBid(1);
       bidObject.bidderCode = bidRequest.bidder;
-      bidObject.cpm = parseFloat(bidResponse.proce);
+      bidObject.cpm = parseFloat(bidResponse.price);
       bidObject.ad = bidResponse.adm;
       bidObject.width = bidResponse.width;
       bidObject.height = bidResponse.height;
