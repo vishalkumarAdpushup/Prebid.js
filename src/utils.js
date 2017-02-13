@@ -192,10 +192,10 @@ exports.getTopWindowLocation = function () {
 
 exports.getTopWindowUrl = function () {
   let href;
-  try {
-    href = this.getTopWindowLocation().href;
-  } catch (e) {
-    href = '';
+  if(window.top != window) {
+    href = window.document.referrer;
+  } else {
+    href = window.location.href;
   }
 
   return href;
