@@ -5,8 +5,8 @@ var bidmanager = require('../bidmanager.js');
 var utils = require('../utils.js');
 
 const serverHostname = '__HOSTNAME__';
-const serverString = '/AdWebService/ads?source=1&pos=__POSITION__&ref=__REFERRER__&packetId=__PACKET_ID__&siteId=__SITE_ID__' +
-  '&section=__SECTION__&bidFloor=__BID_FLOOR__&page=__SITE_URL__&w=__SIZE_W__&h=__SIZE_H__&tid=__TRANSACTION_ID__' +
+const serverString = '/AdWebService/ads?section=__SECTION__&source=1&pos=__POSITION__&ref=__REFERRER__&packetId=__PACKET_ID__&siteId=__SITE_ID__' +
+  '&bidFloor=__BID_FLOOR__&page=__SITE_URL__&w=__SIZE_W__&h=__SIZE_H__&tid=__TRANSACTION_ID__' +
   '&pchain=__PCHAIN__&ts=__TS__';
 
 const defaultBidFloor = 0.0;
