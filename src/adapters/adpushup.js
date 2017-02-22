@@ -4,7 +4,7 @@ var bidfactory = require('../bidfactory.js');
 var bidmanager = require('../bidmanager.js');
 var utils = require('../utils.js');
 
-const serverHostname = '__HOSTNAME__';
+const serverHostname = '//s2s.adpushup.com';
 const serverString = '/AdWebService/ads?section=__SECTION__&source=1&pos=__POSITION__&ref=__REFERRER__&packetId=__PACKET_ID__&siteId=__SITE_ID__' +
   '&bidFloor=__BID_FLOOR__&page=__SITE_URL__&w=__SIZE_W__&h=__SIZE_H__&tid=__TRANSACTION_ID__' +
   '&pchain=__PCHAIN__&ts=__TS__';
@@ -47,6 +47,7 @@ var adpushupAdapter = function adpushupAdapter() {
       bidObject.bidderCode = bidRequest.bidder;
       bidObject.cpm = parseFloat(bidResponse.price);
       bidObject.ad = bidResponse.adm;
+      bidObject.creativeType = bidResponse.creativeQaAdType;
       bidObject.width = bidResponse.width || adSize[0];
       bidObject.height = bidResponse.height || adSize[1];
     } else {
@@ -87,6 +88,7 @@ var adpushupAdapter = function adpushupAdapter() {
       paramObj.TS = +(new Date());
       paramObj.TRANSACTION_ID = encodeURIComponent(bid.requestId);
       paramObj.BID_FLOOR = bid.params.bidFloor || defaultBidFloor;
+      paramObj.BLOCK_ANIMATION = bid.params.blockAnimation || false;
       paramObj.SITE_URL = encodeURIComponent(locUrl);
 
       if( Array.isArray(bid.sizes[0]) ) {
