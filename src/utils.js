@@ -69,6 +69,23 @@ exports.generateUUID = function generateUUID(placeholder) {
     ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, generateUUID);
 };
 
+/**
+ * Returns a random v4 UUID of the form xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx,
+ * with last 'xxxx' chunk being replaced by sum of hex representations of
+ * placeholder (if present) and UTC timestamp
+ * NOTE: It depends upon 'generateUUID' method for UUID generation
+ */
+exports.getUuid = function getUuid(placeholder) {
+  var original = this.generateUUID(),
+    regex = /(-\w{12}?)/,
+    timeStampString = Date.now().toString(16),
+    isPlaceholder = !!(placeholder),
+    stringToInsert = isPlaceholder ? ((placeholder).toString(16) + timeStampString) : timeStampString,
+    result = original.replace(regex, ('-' + stringToInsert));
+
+  return result;
+};
+
 exports.getBidIdParameter = function (key, paramsObj) {
   if (paramsObj && paramsObj[key]) {
     return paramsObj[key];
