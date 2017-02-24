@@ -56,6 +56,43 @@ function _getUniqueIdentifierStr() {
 //generate a random string (to be used as a dynamic JSONP callback)
 exports.getUniqueIdentifierStr = _getUniqueIdentifierStr;
 
+exports.getCryptoWithUInt32ArraySupport = function isCryptoWithUInt32ArraySupported() {
+  var isCryptoSupported = !!(('crypto' in window) && ('getRandomValues' in window.crypto)),
+    isMsCryptoSupported = !!(('msCrypto' in window) && ('getRandomValues' in window.msCrypto)),
+    isUInt32ArraySupported = !!('Uint32Array' in window),
+    isCryptoWithUInt32ArraySupported = !!(isCryptoSupported && isUInt32ArraySupported),
+    isMsCryptoUInt32ArraySupported = !!(isMsCryptoSupported && isUInt32ArraySupported),
+    isFeatureSupported = !!(isCryptoWithUInt32ArraySupported || isMsCryptoUInt32ArraySupported),
+    computedObject = {
+      'isCryptoWithUInt32ArraySupported': isCryptoWithUInt32ArraySupported,
+      'isMsCryptoUInt32ArraySupported': isMsCryptoUInt32ArraySupported,
+      'isFeatureSupported': isFeatureSupported
+    };
+
+  return computedObject;
+};
+
+exports.getUUIDViaWebCrypto = function getUUIDViaWebCrypto() {
+  var cryptoSupport = this.getCryptoWithUInt32ArraySupport(),
+    arrayPlaceholder, randomValuesArray, randomValuesArrayLength, computedString,
+    iterator, randomValueHex, cryptoRef;
+
+  if (!cryptoSupport.isFeatureSupported) { return false; }
+
+  cryptoRef = (cryptoSupport.isCryptoWithUInt32ArraySupported) ? window.crypto : window.msCrypto;
+  arrayPlaceholder = new window.Uint32Array(5);
+  randomValuesArray = cryptoRef.getRandomValues(arrayPlaceholder);
+  arrayPlaceholder = [];
+
+  for (iterator = 0, randomValuesArrayLength = randomValuesArray.length; iterator < randomValuesArrayLength; iterator++) {
+    randomValueHex = randomValuesArray[iterator].toString(16);
+    arrayPlaceholder.push(randomValueHex);
+  }
+
+  computedString = arrayPlaceholder.join('-');
+  return computedString;
+};
+
 /**
  * Returns a random v4 UUID of the form xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx,
  * where each x is replaced with a random hexadecimal digit from 0 to f,
@@ -75,7 +112,7 @@ exports.generateUUID = function generateUUID(placeholder) {
  * placeholder (if present) and UTC timestamp
  * NOTE: It depends upon 'generateUUID' method for UUID generation
  */
-exports.getUuid = function getUuid(placeholder) {
+exports.getUUIDViaMathRandom = function getUUIDViaMathRandom(placeholder) {
   var original = this.generateUUID(),
     regex = /(-\w{12}?)/,
     timeStampString = Date.now().toString(16),
@@ -84,6 +121,16 @@ exports.getUuid = function getUuid(placeholder) {
     result = original.replace(regex, ('-' + stringToInsert));
 
   return result;
+};
+
+exports.getUUID = function getUUID(placeholder) {
+  var cryptoSupport = this.getCryptoWithUInt32ArraySupport();
+
+  if (cryptoSupport.isFeatureSupported) {
+    return this.getUUIDViaWebCrypto();
+  }
+
+  return this.getUUIDViaMathRandom(placeholder);
 };
 
 exports.getBidIdParameter = function (key, paramsObj) {
