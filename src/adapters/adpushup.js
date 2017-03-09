@@ -80,7 +80,7 @@ var adpushupAdapter = function adpushupAdapter() {
       var paramObj = {};
 
       paramObj.REFERRER = encodeURIComponent(document.referrer);
-      paramObj.PACKET_ID = encodeURIComponent(utils.getUUID(bid.params.siteId));
+      paramObj.PACKET_ID = encodeURIComponent(utils.getUniqueId(bid.params.siteId));
       paramObj.SITE_ID = bid.params.siteId;
       paramObj.SECTION = bid.params.section;
       paramObj.POSITION = 0;
