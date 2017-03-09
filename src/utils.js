@@ -14,9 +14,7 @@ var toString = Object.prototype.toString;
 let infoLogger = null;
 try {
   infoLogger = console.info.bind(window.console);
-}
-catch (e) {
-}
+} catch (e) {}
 
 /*
  *   Substitutes into a string from a given map using the token
@@ -77,7 +75,9 @@ exports.getUUIDViaWebCrypto = function getUUIDViaWebCrypto() {
     arrayPlaceholder, randomValuesArray, randomValuesArrayLength, computedString,
     iterator, randomValueHex, cryptoRef;
 
-  if (!cryptoSupport.isFeatureSupported) { return false; }
+  if (!cryptoSupport.isFeatureSupported) {
+    return false;
+  }
 
   cryptoRef = (cryptoSupport.isCryptoWithUInt32ArraySupported) ? window.crypto : window.msCrypto;
   arrayPlaceholder = new window.Uint32Array(5);
@@ -101,8 +101,7 @@ exports.getUUIDViaWebCrypto = function getUUIDViaWebCrypto() {
  */
 exports.generateUUID = function generateUUID(placeholder) {
   return placeholder ?
-    (placeholder ^ Math.random() * 16 >> placeholder/4).toString(16)
-    :
+    (placeholder ^ Math.random() * 16 >> placeholder / 4).toString(16) :
     ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, generateUUID);
 };
 
@@ -121,6 +120,16 @@ exports.getUUIDViaMathRandom = function getUUIDViaMathRandom(placeholder) {
     result = original.replace(regex, ('-' + stringToInsert));
 
   return result;
+};
+
+exports.getUniqueId = function getUniqueId(placeHolder) {
+  var d = +new Date(),
+    r, appendMe = ((!placeHolder || (typeof placeHolder === 'number' && placeHolder < 0)) ? Number(1).toString(16) : Number(placeHolder).toString(16));
+  appendMe = ('0000000'.substr(0, 8 - appendMe.length) + appendMe).toUpperCase();
+  return appendMe + '-xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    r = ((d = Math.floor(d / 16)) + Math.random() * 16) % 16 | 0;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
 };
 
 exports.getUUID = function getUUID(placeholder) {
@@ -257,7 +266,7 @@ exports.getTopWindowLocation = function () {
 exports.getTopWindowUrl = function () {
   var parentUrl;
   if (parent !== window) {
-      parentUrl = document.referrer;
+    parentUrl = document.referrer;
   } else {
     parentUrl = window.location.href;
   }
@@ -411,7 +420,7 @@ exports.isArray = function (object) {
   return this.isA(object, t_Arr);
 };
 
-exports.isNumber = function(object) {
+exports.isNumber = function (object) {
   return this.isA(object, t_Numb);
 };
 
@@ -439,7 +448,7 @@ exports.isEmpty = function (object) {
  * @param str string to test
  * @returns {boolean} if string is empty
  */
-exports.isEmptyStr = function(str) {
+exports.isEmptyStr = function (str) {
   return this.isStr(str) && (!str || 0 === str.length);
 };
 
@@ -447,7 +456,7 @@ exports.isEmptyStr = function(str) {
  * Iterate object with the function
  * falls back to es5 `forEach`
  * @param {Array|Object} object
- * @param {Function(value, key, object)} fn
+ * @param {Function (value, key, object)} fn
  */
 exports._each = function (object, fn) {
   if (this.isEmpty(object)) return;
@@ -497,7 +506,7 @@ exports.indexOf = (function () {
  * Map an array or object into another array
  * given a function
  * @param {Array|Object} object
- * @param {Function(value, key, object)} callback
+ * @param {Function (value, key, object)} callback
  * @return {Array}
  */
 exports._map = function (object, callback) {
@@ -566,19 +575,18 @@ exports.getIframeDocument = function (iframe) {
     } else {
       doc = iframe.contentDocument;
     }
-  }
-  catch (e) {
+  } catch (e) {
     this.logError('Cannot get iframe document', e);
   }
 
   return doc;
 };
 
-exports.getValueString = function(param, val, defaultValue) {
+exports.getValueString = function (param, val, defaultValue) {
   if (val === undefined || val === null) {
     return defaultValue;
   }
-  if (this.isStr(val) ) {
+  if (this.isStr(val)) {
     return val;
   }
   if (this.isNumber(val)) {
