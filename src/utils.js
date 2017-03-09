@@ -255,14 +255,14 @@ exports.getTopWindowLocation = function () {
 };
 
 exports.getTopWindowUrl = function () {
-  let href;
-  if(window.top != window) {
-    href = window.document.referrer;
+  var parentUrl;
+  if (parent !== window) {
+      parentUrl = document.referrer;
   } else {
-    href = window.location.href;
+    parentUrl = window.location.href;
   }
 
-  return href;
+  return parentUrl;
 };
 
 exports.logWarn = function (msg) {
