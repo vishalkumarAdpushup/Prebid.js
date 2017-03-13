@@ -53,7 +53,7 @@ var adpushupAdapter = function adpushupAdapter() {
     } else {
       bidObject = bidfactory.createBid(2);
       bidObject.bidderCode = bidRequest.bidder;
-      utils.logMessage('No prebid response from Admedia for placement code ' + bidRequest.placementCode);
+      utils.logMessage('No prebid response from AdPushup for placement code ' + bidRequest.placementCode);
     }
 
     bidmanager.addBidResponse(bidRequest.placementCode, bidObject);
@@ -80,13 +80,14 @@ var adpushupAdapter = function adpushupAdapter() {
       var paramObj = {};
 
       paramObj.REFERRER = encodeURIComponent(document.referrer);
-      paramObj.PACKET_ID = encodeURIComponent(utils.getUniqueId(bid.params.siteId));
+      //paramObj.PACKET_ID = encodeURIComponent(utils.getUniqueId(bid.params.siteId));
+      paramObj.PACKET_ID = encodeURIComponent(utils.getUniqueId(Date.now()));
       paramObj.SITE_ID = bid.params.siteId;
       paramObj.SECTION = bid.params.section;
       paramObj.POSITION = 0;
       paramObj.PCHAIN = 0;
       paramObj.TS = +(new Date());
-      paramObj.TRANSACTION_ID = encodeURIComponent(bid.requestId);
+      paramObj.TRANSACTION_ID = window.params.packetId || encodeURIComponent(bid.requestId);
       paramObj.BID_FLOOR = bid.params.bidFloor || defaultBidFloor;
       paramObj.BLOCK_ANIMATION = bid.params.blockAnimation || false;
       paramObj.SITE_URL = bid.params.page;

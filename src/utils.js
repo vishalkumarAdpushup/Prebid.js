@@ -126,6 +126,9 @@ exports.getUniqueId = function getUniqueId(placeHolder) {
   var d = +new Date(),
     r, appendMe = ((!placeHolder || (typeof placeHolder === 'number' && placeHolder < 0)) ? Number(1).toString(16) : Number(placeHolder).toString(16));
   appendMe = ('0000000'.substr(0, 8 - appendMe.length) + appendMe).toUpperCase();
+  if (typeof performance !== 'undefined' && typeof performance.now === 'function'){
+      d += performance.now(); //use high-precision timer if available
+  }
   return appendMe + '-xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     r = ((d = Math.floor(d / 16)) + Math.random() * 16) % 16 | 0;
     return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
