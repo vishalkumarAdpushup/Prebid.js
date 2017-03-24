@@ -76,7 +76,7 @@ function RubiconAdapter() {
           utils.logMessage('XHR callback function called for ad ID: ' + bid.bidId);
           handleRpCB(responseText, bid);
         } catch (err) {
-          if (typeof err === "string") {
+          if (typeof err === 'string') {
             utils.logWarn(`${err} when processing rubicon response for placement code ${bid.placementCode}`);
           } else {
             utils.logError('Error processing rubicon response for placement code ' + bid.placementCode, null, err);
@@ -118,7 +118,7 @@ function RubiconAdapter() {
     ) {
       size = bid.sizes[0];
     } else {
-      throw "Invalid Video Bid - No size provided";
+      throw 'Invalid Video Bid - No size provided';
     }
 
     let postData =  {
@@ -149,7 +149,7 @@ function RubiconAdapter() {
     if(params.video.size_id) {
       slotData.size_id = params.video.size_id;
     } else {
-      throw "Invalid Video Bid - Invalid Ad Type!";
+      throw 'Invalid Video Bid - Invalid Ad Type!';
     }
 
     if(params.inventory && typeof params.inventory === 'object') {
@@ -177,6 +177,7 @@ function RubiconAdapter() {
       siteId,
       zoneId,
       position,
+      floor,
       keywords,
       visitor,
       inventory,
@@ -185,6 +186,7 @@ function RubiconAdapter() {
     } = bid.params;
 
     // defaults
+    floor = (floor = parseFloat(floor)) > 0.01 ? floor : 0.01;
     position = position || 'btf';
 
     // use rubicon sizes if provided, otherwise adUnit.sizes
@@ -193,7 +195,11 @@ function RubiconAdapter() {
     );
 
     if(parsedSizes.length < 1) {
-      throw "no valid sizes";
+      throw 'no valid sizes';
+    }
+
+    if(!/^\d+$/.test(accountId)) {
+      throw 'invalid accountId provided';
     }
 
     // using array to honor ordering. if order isn't important (it shouldn't be), an object would probably be preferable
@@ -204,14 +210,14 @@ function RubiconAdapter() {
       'size_id', parsedSizes[0],
       'alt_size_ids', parsedSizes.slice(1).join(',') || undefined,
       'p_pos', position,
-      'rp_floor', '0.01',
+      'rp_floor', floor,
       'tk_flint', getIntegration(),
       'p_screen_res', _getScreenResolution(),
       'kw', keywords,
       'tk_user_key', userId
     ];
 
-    if(visitor !== null && typeof visitor === "object") {
+    if(visitor !== null && typeof visitor === 'object') {
       utils._each(visitor, (item, key) => queryString.push(`tg_v.${key}`, item));
     }
 

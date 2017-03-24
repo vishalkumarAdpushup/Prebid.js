@@ -17,7 +17,7 @@ var WideOrbitAdapter = function WideOrbitAdapter() {
       return;
     }
 
-    var properties = ['site', 'page', 'width', 'height', 'rank', 'subPublisher', 'ecpm', 'atf', 'pId', 'pbId'],
+    var properties = ['site', 'page', 'width', 'height', 'rank', 'subPublisher', 'ecpm', 'atf', 'pId', 'pbId', 'referrer'],
         prop;
 
     utils._each(properties, function (correctName) {
@@ -82,12 +82,13 @@ var WideOrbitAdapter = function WideOrbitAdapter() {
     ]);
   }
 
-  function _setupAdCall(publisherId, placementCount, placementsComponent) {
+  function _setupAdCall(publisherId, placementCount, placementsComponent, referrer) {
     return _setParams(base + pageImpression, [
       ['pbId', publisherId],
       ['pc', placementCount],
       ['cts', new Date().getTime()],
-      ['cb', Math.floor(Math.random() * 100000000)]
+      ['cb', Math.floor(Math.random() * 100000000)],
+      ['referrer', encodeURIComponent(referrer || '')]
     ]) + placementsComponent;
   }
 
@@ -104,7 +105,7 @@ var WideOrbitAdapter = function WideOrbitAdapter() {
   function _callBids(params) {
     var publisherId,
       bidUrl = '',
-      i;
+      i, referrer;
 
     bids = params.bids || [];
 
@@ -116,10 +117,11 @@ var WideOrbitAdapter = function WideOrbitAdapter() {
       _fixParamNames(requestParams);
 
       publisherId = requestParams.pbId;
+      referrer = referrer || requestParams.referrer;
       bidUrl += _setupPlacementParameters(i, requestParams);
     }
 
-    bidUrl = _setupAdCall(publisherId, bids.length, bidUrl);
+    bidUrl = _setupAdCall(publisherId, bids.length, bidUrl, referrer);
 
     utils.logMessage('Calling WO: ' + bidUrl);
 
@@ -138,7 +140,7 @@ var WideOrbitAdapter = function WideOrbitAdapter() {
         case 'iframe':
           createdElem = utils.createInvisibleIframe();
           break;
-        case 'javascript':
+        case 'js':
           createdElem = document.createElement('script');
           createdElem.type = 'text/javascript';
           createdElem.async = true;
