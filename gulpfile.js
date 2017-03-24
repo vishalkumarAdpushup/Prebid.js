@@ -76,6 +76,7 @@ gulp.task('webpack', function () {
     .pipe(wrap('module.exports = (function(){ <%= contents %> });'))
     .pipe(header(banner, { prebid: prebid }))
     .pipe(gulp.dest('build/dist'))
+    .pipe(gulp.dest('../src/libs'))
     .pipe(connect.reload());
 });
 
