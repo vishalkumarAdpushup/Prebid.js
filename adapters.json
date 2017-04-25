@@ -5,11 +5,41 @@
     "getintent",
     "pubmatic",
     "pulsepoint",
+    "appnexus",
+    "appnexusAst",
+    "beachfront",
+    "audienceNetwork",
+    "conversant",
+    "districtmDMX",
+    "fidelity",
+    "gumgum",
+    "hiromedia",
+    "indexExchange",
+    "innity",
+    "kruxlink",
+    "getintent",
+    "inneractive",
+    "komoona",
+    "lifestreet",
+    "mantis",
+    "openx",
+    "piximedia",
+    "pubmatic",
+    "pulsepoint",
+    "pulsepointLite",
+    "rhythmone",
+    "rubicon",
+    "smartyads",
+    "huddledmasses",
+    "smartadserver",
     "sekindoUM",
     "springserve",
     "wideorbit",
     "criteo",
     "admixer",
+    "atomx",
+    "tapsense",
+    "trion",
     {
       "appnexus": {
         "alias": "brealtime"
@@ -35,6 +65,16 @@
       }
     },
     {
+      "beachfront": {
+        "supportedMediaTypes": ["video"]
+      }
+    },
+    {
+      "appnexus": {
+        "alias": "matomy"
+      }
+    },
+    {
       "rubicon": {
         "alias": "rubiconLite",
         "supportedMediaTypes": ["video"]
@@ -46,9 +86,28 @@
       }
     },
     {
+      "appnexus": {
+        "alias": "oftmedia"
+      }
+    },
+    {
       "adkernel": {
         "alias": "headbidding"
       }
+    },
+    {
+      "getintent": {
+        "supportedMediaTypes" : ["video"]
+      }
+    },
+    {
+      "stickyadstv": {
+        "alias": "freewheel-ssp"
+      }
+    },
+    {
+      "rhythmone": {
+        "supportedMediaTypes": ["video"]
+      }
     }
-
 ]
