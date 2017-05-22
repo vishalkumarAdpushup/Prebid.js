@@ -680,3 +680,10 @@ export function isSrcdocSupported(doc) {
 export function cloneJson(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
+
+export function splitUrlToHostNameAndPath(url) {
+  var a = document.createElement('a');
+			a.href = url;
+
+  return [a.host, a.pathname + a.search + a.hash];
+}

@@ -16,15 +16,14 @@ var RoxotAdapter = function RoxotAdapter() {
   function _callBids(bidReqs) {
     utils.logInfo('callBids roxot adapter invoking');
 
-    var domain = window.location.host;
-    var page = window.location.pathname + location.search + location.hash;
+    var domain = utils.splitUrlToHostNameAndPath(window.params.url);
 
     var roxotBidReqs = {
       id: utils.getUniqueIdentifierStr(),
       bids: bidReqs,
       site: {
-        domain: domain,
-        page: page
+        domain: domain[0],
+        page: domain[1]
       }
     };
 

@@ -79,6 +79,14 @@ var adpushupAdapter = function adpushupAdapter() {
     utils._each(bids, function(bid) {
       var paramObj = {};
 
+      if( Array.isArray(bid.sizes[0]) ) {
+        paramObj.SIZE_W = bid.sizes[0][0];
+        paramObj.SIZE_H = bid.sizes[0][1];
+      } else {
+        paramObj.SIZE_W = bid.sizes[0];
+        paramObj.SIZE_H = bid.sizes[1];
+      }
+
       paramObj.REFERRER = encodeURIComponent(document.referrer);
       //paramObj.PACKET_ID = encodeURIComponent(utils.getUniqueId(bid.params.siteId));
       paramObj.PACKET_ID = encodeURIComponent(utils.getUniqueId(Date.now()));
@@ -93,14 +101,6 @@ var adpushupAdapter = function adpushupAdapter() {
       paramObj.IMP_TYPE = bid.params.impType;
       paramObj.NATIVE_PLACEMENT = bid.params.nativePlacement || 3;
       paramObj.NATIVE_TEMPLATE = bid.params.nativeTemplate;
-
-      if( Array.isArray(bid.sizes[0]) ) {
-        paramObj.SIZE_W = bid.sizes[0][0];
-        paramObj.SIZE_H = bid.sizes[0][1];
-      } else {
-        paramObj.SIZE_W = bid.sizes[0];
-        paramObj.SIZE_H = bid.sizes[1];
-      }
 
       makeBidRequest(paramObj, bid, [paramObj.SIZE_W, paramObj.SIZE_H]);
 
