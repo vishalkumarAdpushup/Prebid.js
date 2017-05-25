@@ -5,8 +5,8 @@ var bidmanager = require('../bidmanager.js');
 var utils = require('../utils.js');
 
 const serverHostname = '//s2s.adpushup.com';
-const serverString = '/AdWebService/ads?section=__SECTION__&pos=__POSITION__&ref=__REFERRER__&packetId=__PACKET_ID__&blockAnimation=__BLOCK_ANIMATION__&siteId=__SITE_ID__' +
-  '&bidFloor=__BID_FLOOR__&page=__SITE_URL__&w=__SIZE_W__&h=__SIZE_H__&tid=__TRANSACTION_ID__&impType=__IMP_TYPE__&nativePlacement=__NATIVE_PLACEMENT__&nativeTemplate=__NATIVE_TEMPLATE__' +
+const serverString = '/AdWebService/ads?section=__SECTION__&pos=__POSITION__&ref=__REFERRER__&blockAnimation=__BLOCK_ANIMATION__&siteId=__SITE_ID__' +
+  '&bidFloor=__BID_FLOOR__&page=__SITE_URL__&w=__SIZE_W__&h=__SIZE_H__&tid=__PACKET_ID__&impType=__IMP_TYPE__&nativePlacement=__NATIVE_PLACEMENT__&nativeTemplate=__NATIVE_TEMPLATE__' +
   '&ts=__TS__';
 
 const defaultBidFloor = 0.0;
@@ -94,7 +94,7 @@ var adpushupAdapter = function adpushupAdapter() {
       paramObj.SECTION = bid.params.section;
       paramObj.POSITION = 0;
       paramObj.TS = +(new Date());
-      paramObj.TRANSACTION_ID = encodeURIComponent(bid.requestId);
+      //paramObj.TRANSACTION_ID = encodeURIComponent(bid.requestId);
       paramObj.BID_FLOOR = bid.params.bidFloor || defaultBidFloor;
       paramObj.BLOCK_ANIMATION = bid.params.blockAnimation || false;
       paramObj.SITE_URL = bid.params.page;
