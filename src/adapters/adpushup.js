@@ -37,10 +37,25 @@ window.jsonPLoad = function (url, callback, paramName) {
   (document.getElementsByTagName('head')[0] || document.documentElement).appendChild(script);
 };
 
+var doUserCookieSync = function(cookieSyncMarkup){
+  var div = document.createElement('div');
+  div.style.display = 'none';
+  div.style.width = '0px';
+  div.style.height = '0px';
+
+  div.innerHTML = cookieSyncMarkup;
+
+  document.body.appendChild(div);
+}
+
 var adpushupAdapter = function adpushupAdapter() {
   function bidResponseHandler(bidRequest, adSize, _bidResponse) {
     var bidResponse = _bidResponse.creativeList[0],
       bidObject;
+
+      if(_bidResponse.cookieSyncMarkup){
+        doUserCookieSync(_bidResponse.cookieSyncMarkup);
+      }
 
     if (bidResponse && bidResponse.price > 0 && !!bidResponse.adm) {
       bidObject = bidfactory.createBid(1);
