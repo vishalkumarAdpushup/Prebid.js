@@ -5,7 +5,7 @@ import {flatten, uniques, isGptPubadsDefined, adUnitsFilter } from './utils';
 import { videoAdUnit, hasNonVideoBidder } from './video';
 import 'polyfill';
 import {parse as parseURL, format as formatURL} from './url';
-import {isValidePriceConfig} from './cpmBucketManager';
+import {isValidePriceConfig, getPriceBucketString} from './cpmBucketManager';
 import {listenMessagesFromCreative} from './secure-creatives';
 import { loadScript } from './adloader';
 
@@ -43,6 +43,7 @@ $$PREBID_GLOBAL$$._adUnitCodes = [];
 $$PREBID_GLOBAL$$._winningBids = [];
 $$PREBID_GLOBAL$$._adsReceived = [];
 $$PREBID_GLOBAL$$._sendAllBids = false;
+$$PREBID_GLOBAL$$.getPriceBucketString = getPriceBucketString;
 
 $$PREBID_GLOBAL$$.bidderSettings = $$PREBID_GLOBAL$$.bidderSettings || {};
 
