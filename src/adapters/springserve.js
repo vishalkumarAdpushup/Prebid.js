@@ -4,112 +4,116 @@ var adloader = require('../adloader');
 
 var SpringServeAdapter;
 SpringServeAdapter = function SpringServeAdapter() {
+	function buildSpringServeCall(bid) {
+		var spCall = window.location.protocol + '//bidder.springserve.com/display/hbid?';
 
-  function buildSpringServeCall(bid) {
+		//get width and height from bid attribute
+		var size = bid.sizes[0];
+		var width = size[0];
+		var height = size[1];
 
-    var spCall = window.location.protocol + '//bidder.springserve.com/display/hbid?';
+		spCall += '&w=';
+		spCall += width;
+		spCall += '&h=';
+		spCall += height;
 
-    //get width and height from bid attribute
-    var size = bid.sizes[0];
-    var width = size[0];
-    var height = size[1];
+		var params = bid.params;
 
-    spCall += '&w=';
-    spCall += width;
-    spCall += '&h=';
-    spCall += height;
+		//maps param attributes to request parameters
+		var requestAttrMap = {
+			sp: 'supplyPartnerId',
+			imp_id: 'impId'
+		};
 
-    var params = bid.params;
+		for (var property in requestAttrMap) {
+			if (requestAttrMap.hasOwnProperty && params.hasOwnProperty(requestAttrMap[property])) {
+				spCall += '&';
+				spCall += property;
+				spCall += '=';
 
-    //maps param attributes to request parameters
-    var requestAttrMap = {
-      sp: 'supplyPartnerId',
-      imp_id: 'impId'
-    };
+				//get property from params and include it in request
+				spCall += params[requestAttrMap[property]];
+			}
+		}
 
-    for (var property in requestAttrMap) {
-      if (requestAttrMap.hasOwnProperty && params.hasOwnProperty(requestAttrMap[property])) {
-        spCall += '&';
-        spCall += property;
-        spCall += '=';
+		var domain = params.domain || window.location.hostname;
 
-        //get property from params and include it in request
-        spCall += params[requestAttrMap[property]];
-      }
-    }
+		//override domain when testing
+		if (params.hasOwnProperty('test') && params.test === true) {
+			spCall += '&debug=true';
+			domain = 'test.com';
+		}
 
-    var domain = window.location.hostname;
+		spCall += '&domain=';
+		spCall += domain;
+		spCall += '&callback=$$PREBID_GLOBAL$$.handleSpringServeCB';
 
-    //override domain when testing
-    if (params.hasOwnProperty('test') && params.test === true) {
-      spCall += '&debug=true';
-      domain = 'test.com';
-    }
+		return spCall;
+	}
 
-    spCall += '&domain=';
-    spCall += domain;
-    spCall += '&callback=$$PREBID_GLOBAL$$.handleSpringServeCB';
+	function _callBids(params) {
+		var bids = params.bids || [];
+		for (var i = 0; i < bids.length; i++) {
+			var bid = bids[i];
+			//bidmanager.pbCallbackMap[bid.params.impId] = params;
+			adloader.loadScript(buildSpringServeCall(bid));
+		}
+	}
 
-    return spCall;
-  }
+	$$PREBID_GLOBAL$$.handleSpringServeCB = function(responseObj) {
+		if (
+			responseObj &&
+			responseObj.seatbid &&
+			responseObj.seatbid.length > 0 &&
+			responseObj.seatbid[0].bid[0] !== undefined
+		) {
+			//look up the request attributs stored in the bidmanager
+			var responseBid = responseObj.seatbid[0].bid[0];
+			//var requestObj = bidmanager.getPlacementIdByCBIdentifer(responseBid.impid);
+			var requestBids = $$PREBID_GLOBAL$$._bidsRequested.find(bidSet => bidSet.bidderCode === 'springserve');
+			if (requestBids && requestBids.bids.length > 0) {
+				requestBids = requestBids.bids.filter(bid => bid.params && bid.params.impId === +responseBid.impid);
+			} else {
+				requestBids = [];
+			}
+			var bid = bidfactory.createBid(1);
+			var placementCode;
 
-  function _callBids(params) {
-    var bids = params.bids || [];
-    for (var i = 0; i < bids.length; i++) {
-      var bid = bids[i];
-      //bidmanager.pbCallbackMap[bid.params.impId] = params;
-      adloader.loadScript(buildSpringServeCall(bid));
-    }
-  }
+			//assign properties from the original request to the bid object
+			for (var i = 0; i < requestBids.length; i++) {
+				var bidRequest = requestBids[i];
+				if (bidRequest.bidder === 'springserve') {
+					placementCode = bidRequest.placementCode;
+					var size = bidRequest.sizes[0];
+					bid.width = size[0];
+					bid.height = size[1];
+				}
+			}
 
-  $$PREBID_GLOBAL$$.handleSpringServeCB = function (responseObj) {
-    if (responseObj && responseObj.seatbid && responseObj.seatbid.length > 0 &&
-      responseObj.seatbid[0].bid[0] !== undefined) {
-      //look up the request attributs stored in the bidmanager
-      var responseBid = responseObj.seatbid[0].bid[0];
-      //var requestObj = bidmanager.getPlacementIdByCBIdentifer(responseBid.impid);
-      var requestBids = $$PREBID_GLOBAL$$._bidsRequested.find(bidSet => bidSet.bidderCode === 'springserve');
-      if (requestBids && requestBids.bids.length > 0) {
-        requestBids = requestBids.bids.filter(bid => bid.params && bid.params.impId === +responseBid.impid);
-      } else {
-        requestBids = [];
-      }
-      var bid = bidfactory.createBid(1);
-      var placementCode;
+			if (requestBids[0]) {
+				bid.bidderCode = requestBids[0].bidder;
+			}
 
-      //assign properties from the original request to the bid object
-      for (var i = 0; i < requestBids.length; i++) {
-        var bidRequest = requestBids[i];
-        if (bidRequest.bidder === 'springserve') {
-          placementCode = bidRequest.placementCode;
-          var size = bidRequest.sizes[0];
-          bid.width = size[0];
-          bid.height = size[1];
-        }
-      }
+			if (responseBid.hasOwnProperty('price') && responseBid.hasOwnProperty('adm')) {
+				//assign properties from the response to the bid object
+				bid.cpm = responseBid.price;
+				bid.ad = responseBid.adm;
+			} else {
+				//make object for invalid bid response
+				bid = bidfactory.createBid(2);
+				bid.bidderCode = 'springserve';
+			}
 
-      if (requestBids[0]) {bid.bidderCode = requestBids[0].bidder;}
+			bidmanager.addBidResponse(placementCode, bid);
+		}
+	};
 
-      if (responseBid.hasOwnProperty('price') && responseBid.hasOwnProperty('adm')) {
-        //assign properties from the response to the bid object
-        bid.cpm = responseBid.price;
-        bid.ad = responseBid.adm;
-      } else {
-        //make object for invalid bid response
-        bid = bidfactory.createBid(2);
-        bid.bidderCode = 'springserve';
-      }
-
-      bidmanager.addBidResponse(placementCode, bid);
-    }
-  };
-
-  // Export the callBids function, so that prebid.js can execute this function
-  // when the page asks to send out bid requests.
-  return {
-    callBids: _callBids,
-    buildSpringServeCall: buildSpringServeCall
-  };
+	// Export the callBids function, so that prebid.js can execute this function
+	// when the page asks to send out bid requests.
+	return {
+		callBids: _callBids,
+		buildSpringServeCall: buildSpringServeCall
+	};
 };
 
 module.exports = SpringServeAdapter;
