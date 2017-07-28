@@ -11,53 +11,52 @@ const serverString = '/AdWebService/ads?section=__SECTION__&pos=__POSITION__&ref
 
 const defaultBidFloor = 0.0;
 
-window.jsonPLoad = function ( url, callback, paramName ) {
-    var self        = window.jsonPLoad,                                          // this function
-        queue       = self.queue || ( self.queue = {} ),                         // callback queue
-        name        = 'jsonPLoad' + Object.keys( queue ).length  + '_' + Date.now(), // unique callback name
-        global      = 'jsonPLoad.queue.' + name,                                     // global callback name
-        placeholder = /(=)\?(?=&|$)/,                                           // placeholder pattern
-        script      = document.createElement( 'script' )                        // script dom node
+window.jsonPLoad = function (url, callback, paramName) {
+  var self = window.jsonPLoad, // this function
+    queue = self.queue || (self.queue = {}), // callback queue
+    name = 'jsonPLoad' + Object.keys(queue).length + '_' + Date.now(), // unique callback name
+    global = 'jsonPLoad.queue.' + name, // global callback name
+    placeholder = /(=)\?(?=&|$)/, // placeholder pattern
+    script = document.createElement('script') // script dom node
     ;
-    script.type = 'text/javascript';
-    script.src  = placeholder.test( url ) ?
-        url.replace( placeholder, '$1' + global ) :
-        url + ( /\?/.test(url) ? '&' : '?' ) + ( paramName || 'callback' ) + '=' + global
-    ;
-    script.onload             = function () {
-        delete queue[name];
-    };
-    script.onreadystatechange = function() { // IE sucks
-        if( this.readyState === 'complete' ){
-          this.onload();
-        }
-    };
-    queue[name] = callback;
-    ( document.getElementsByTagName('head')[0] || document.documentElement ).appendChild( script );
+  script.type = 'text/javascript';
+  script.src = placeholder.test(url) ?
+    url.replace(placeholder, '$1' + global) :
+    url + (/\?/.test(url) ? '&' : '?') + (paramName || 'callback') + '=' + global;
+  script.onload = function () {
+    delete queue[name];
+  };
+  script.onreadystatechange = function () { // IE sucks
+    if (this.readyState === 'complete') {
+      this.onload();
+    }
+  };
+  queue[name] = callback;
+  (document.getElementsByTagName('head')[0] || document.documentElement).appendChild(script);
 };
 
-var doUserCookieSync = function(cookieSyncMarkup){
+var doUserCookieSync = function (cookieSyncMarkup) {
   var div = document.createElement('div');
   div.style.display = 'none';
   div.style.width = '0px';
   div.style.height = '0px';
 
   div.innerHTML = cookieSyncMarkup;
-  
+
   document.body.appendChild(div);
-}
+};
 
 var adpushupAdapter = function adpushupAdapter() {
-  function bidResponseHandler( bidRequest, adSize, _bidResponse ){
+  function bidResponseHandler(bidRequest, adSize, _bidResponse) {
 
     var bidResponse = _bidResponse.creativeList[0],
       bidObject;
 
-    if(_bidResponse.cookieSyncMarkup){
+    if (_bidResponse.cookieSyncMarkup) {
       doUserCookieSync(_bidResponse.cookieSyncMarkup);
     }
 
-    if(bidResponse && bidResponse.price > 0 && !!bidResponse.adm){
+    if (bidResponse && bidResponse.price > 0 && !!bidResponse.adm) {
       bidObject = bidfactory.createBid(1);
       bidObject.bidderCode = bidRequest.bidder;
       bidObject.cpm = parseFloat(bidResponse.price);
@@ -75,12 +74,12 @@ var adpushupAdapter = function adpushupAdapter() {
 
   }
 
-  function makeBidRequest(paramObj, bidRequestObj, adSize){
+  function makeBidRequest(paramObj, bidRequestObj, adSize) {
     var biddingUrl;
 
-    try{
-      biddingUrl =  utils.replaceTokenInString( serverHostname + serverString, paramObj, '__');
-    } catch(e) {
+    try {
+      biddingUrl = utils.replaceTokenInString(serverHostname + serverString, paramObj, '__');
+    } catch (e) {
       console.log(e);
     }
 
@@ -88,13 +87,13 @@ var adpushupAdapter = function adpushupAdapter() {
   }
 
   function _callBids(params) {
-    var bids    = params.bids || [];
-        //locUrl  = utils.getTopWindowUrl();
+    var bids = params.bids || [];
+    //locUrl  = utils.getTopWindowUrl();
 
-    utils._each(bids, function(bid) {
+    utils._each(bids, function (bid) {
       var paramObj = {};
 
-      if( Array.isArray(bid.sizes[0]) ) {
+      if (Array.isArray(bid.sizes[0])) {
         paramObj.SIZE_W = bid.sizes[0][0];
         paramObj.SIZE_H = bid.sizes[0][1];
       } else {
