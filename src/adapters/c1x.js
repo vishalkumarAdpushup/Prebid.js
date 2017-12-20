@@ -37,8 +37,7 @@ var C1XAdapter = function C1XAdapter() {
 				pixel.width = 1;
 				pixel.height = 1;
 				var useSSL = 'https:' == document.location.protocol;
-				pixel.src =
-					(useSSL ? 'https:' : 'http:') + PIXEL_ENDPOINT + pixelId;
+				pixel.src = (useSSL ? 'https:' : 'http:') + PIXEL_ENDPOINT + pixelId;
 				document.body.insertBefore(pixel, null);
 			}, PIXEL_FIRE_DELAY);
 		}
@@ -67,7 +66,7 @@ var C1XAdapter = function C1XAdapter() {
 					return prev + (prev === '' ? '' : ',') + current.join('x');
 				}, '');
 			// send floor price if the setting is available.
-			var floorPriceMap = getSettings('floorPriceMap');
+			/*var floorPriceMap = getSettings('floorPriceMap');
 			console.log('floor price map: ', floorPriceMap);
 			console.log('size: ' + sizes[0]);
 			if (floorPriceMap) {
@@ -77,7 +76,13 @@ var C1XAdapter = function C1XAdapter() {
 						'a' + (i + 1) + 'p=' + floorPriceMap[adUnitSize]
 					);
 				}
+			}*/
+
+			// send floor price if the param is available.
+			if (bids[i].floorPrice) {
+				options.push('a' + (i + 1) + 'p=' + bids[i].floorPrice);
 			}
+
 			options.push('a' + (i + 1) + 's=[' + sizeStr + ']');
 		}
 		options.push('rnd=' + new Date().getTime()); // cache busting
@@ -101,20 +106,13 @@ var C1XAdapter = function C1XAdapter() {
 					bidObject.width = data.width;
 					bidObject.height = data.height;
 					console.log(
-						'c1x: INFO creating bid for adunit: ' +
-							data.adId +
-							' size: ' +
-							data.width +
-							'x' +
-							data.height
+						'c1x: INFO creating bid for adunit: ' + data.adId + ' size: ' + data.width + 'x' + data.height
 					);
 				} else {
 					// no bid.
 					bidObject = bidfactory.createBid(2);
 					bidObject.bidderCode = 'c1x';
-					console.log(
-						'c1x: INFO creating a NO bid for adunit: ' + data.adId
-					);
+					console.log('c1x: INFO creating a NO bid for adunit: ' + data.adId);
 				}
 				bidmanager.addBidResponse(data.adId, bidObject);
 			}
