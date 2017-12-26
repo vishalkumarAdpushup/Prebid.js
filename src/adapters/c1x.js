@@ -86,7 +86,7 @@ var C1XAdapter = function C1XAdapter() {
 			options.push('a' + (i + 1) + 's=[' + sizeStr + ']');
 		}
 		options.push('rnd=' + new Date().getTime()); // cache busting
-		var c1xEndpoint = (useSSL ? 'https:' : 'http:') + ENDPOINT;
+		var c1xEndpoint = document.location.protocol + ENDPOINT;
 		if (getSettings('endpoint')) {
 			c1xEndpoint = getSettings('endpoint');
 		}
