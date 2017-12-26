@@ -14,7 +14,7 @@ var adloader = require('../adloader');
  */
 var C1XAdapter = function C1XAdapter() {
 	// default endpoint. Can be overridden by adding an "endpoint" property to the first param in bidder config.
-	var ENDPOINT = 'http://ht.c1exchange.com/ht',
+	var ENDPOINT = '//ht.c1exchange.com/ht',
 		PIXEL_ENDPOINT = '//px.c1exchange.com/pubpixel/',
 		PIXEL_FIRE_DELAY = 3000;
 
@@ -86,7 +86,7 @@ var C1XAdapter = function C1XAdapter() {
 			options.push('a' + (i + 1) + 's=[' + sizeStr + ']');
 		}
 		options.push('rnd=' + new Date().getTime()); // cache busting
-		var c1xEndpoint = ENDPOINT;
+		var c1xEndpoint = (useSSL ? 'https:' : 'http:') + ENDPOINT;
 		if (getSettings('endpoint')) {
 			c1xEndpoint = getSettings('endpoint');
 		}
