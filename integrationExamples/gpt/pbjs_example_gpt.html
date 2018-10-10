@@ -12,7 +12,7 @@
         googletag.pubads().disableInitialLoad();
     });
     var $$PREBID_GLOBAL$$ = $$PREBID_GLOBAL$$ || {};
-    $$PREBID_GLOBAL$$.que = $$PREBID_GLOBAL$$.que || [];
+    $$PREBID_GLOBAL$$.cmd = $$PREBID_GLOBAL$$.cmd || [];
     $$PREBID_GLOBAL$$.retries = 0;
 
     /* $$PREBID_GLOBAL$$.initAdserver will be called either when all bids are back, or
@@ -26,7 +26,7 @@
           return;
         }
         googletag.cmd.push(function () {
-            $$PREBID_GLOBAL$$.que.push(function () {
+            $$PREBID_GLOBAL$$.cmd.push(function () {
                 $$PREBID_GLOBAL$$.setTargetingForGPTAsync();
             });
             googletag.pubads().refresh();
@@ -60,7 +60,7 @@
         node.parentNode.insertBefore(gads, node);
     })();
 
-    $$PREBID_GLOBAL$$.que.push(function () {
+    $$PREBID_GLOBAL$$.cmd.push(function () {
 
         /* 1. Register bidder tag Ids
 
@@ -116,7 +116,7 @@
                     },
                     {
                         bidder: 'adform',
-                        // available params: [ 'mid', 'inv', 'pdom', 'mname', 'mkw', 'mkv', 'cat', 'bcat', 'bcatrt', 'adv', 'advt', 'cntr', 'cntrt', 'maxp', 'minp', 'sminp', 'w', 'h', 'pb', 'pos', 'cturl', 'iturl', 'cttype', 'hidedomain', 'cdims', 'test' ]
+                        // available params: [ 'mid', 'inv', 'pdom', 'mname', 'mkw', 'mkv', 'cat', 'bcat', 'bcatrt', 'adv', 'advt', 'cntr', 'cntrt', 'maxp', 'minp', 'sminp', 'w', 'h', 'pb', 'pos', 'cturl', 'iturl', 'cttype', 'hidedomain', 'cdims', 'test', priceType ]
                         params: {
                             adxDomain: 'adx.adform.net', //optional
                             mid: 158989,
@@ -251,17 +251,59 @@
                         }
                     },
                     {
+                        bidder: 'quantcast',
+                        params: {
+                            publisherId: 'test-publisher', // REQUIRED Publisher Id provided by Quantcast
+                            battr : [1,2] // OPTIONAL - Array of Blocked creative attributes as per OpenRTB Spec List 5.3
+                        }
+                    },
+                    {
                         bidder: 'atomx',
                         params: {
                             id: 7395
                         }
                     },
                     {
-                      bidder: 'huddledmasses',
+                      bidder: 'colossusssp',
                         params: {
                             placement_id: 0
                         }
+                    },
+                    {
+                      bidder: 'weborama',
+                      params: {
+                          placementId: 0,
+                          traffic: 'banner'
+                      }
+                    },
+                    {
+                        bidder: 'pollux',
+                        params: {
+                            zone: '1806' // REQUIRED Zone Id (1806 is a test zone)
+                        }
+                    },
+                    {
+                        bidder: 'adkernelAdn',
+                        params: {
+                            pubId: 50357,   //REQUIRED
+                            host: 'dsp-staging.adkernel.com'    //OPTIONAL
+                        }
+                    },
+                    {
+                        bidder: 'bizzclick',
+                        params: {
+                            placementId: 0,
+                            type: "banner"
+                        }
+                    },
+                    {
+                        bidder: 'zedo',
+                        params: {
+                            channelCode: 2264002816,   //REQUIRED
+                            dimId: 9 //REQUIRED
+                        }
                     }
+
                 ]
             }, {
                 code: 'div-gpt-ad-12345678-1',
@@ -332,6 +374,12 @@
                         }
                     },
                     {
+                        bidder: 'yieldmo',
+                        params: {
+                            placementId: 'ym_12341234' // Optional Yieldmo Placement ID
+                        }
+                    },
+                    {
                         bidder: 'adequant',
                         params: {
                             publisher_id: 5000563,  // REQUIRED int or str publisher ID. To get one, register at https://control.adequant.com
@@ -364,10 +412,36 @@
                         }
                     },
                     {
+                        bidder: 'quantcast',
+                        params: {
+                            publisherId: 'test-publisher', // REQUIRED Publisher Id provided by Quantcast
+                            battr : [1,2] // OPTIONAL - Array of Blocked creative attributes as per OpenRTB Spec List 5.3
+                        }
+                    },
+                    {
+                        bidder: 'colossusssp',
+                        params: {
+                            placement_id: 0
+                        }
+                    },
+                    {
                         bidder: 'huddledmasses',
                         params: {
                             placement_id: 0
                         }
+                    },
+                    {
+                        bidder: 'pollux',
+                        params: {
+                            zone: '276' // REQUIRED Zone Id (276 is a test zone)
+                        }
+                    },
+                    {
+                      bidder: 'bizzclick',
+                      params: {
+                        placementId: 0,
+                        type: "banner"
+                      }
                     }
                 ]
             }
@@ -526,7 +600,7 @@
     ga('create', 'XXXXXX', 'auto');
 
     //Send data from prebid.js automatically
-    $$PREBID_GLOBAL$$.que.push(function () {
+    $$PREBID_GLOBAL$$.cmd.push(function () {
         $$PREBID_GLOBAL$$.enableAnalytics({
             provider: 'ga',
             options: {

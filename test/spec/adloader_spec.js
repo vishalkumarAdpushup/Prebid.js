@@ -1,40 +1,31 @@
-describe('adLoader', function () {
-  var assert = require('chai').assert,
-    adLoader = require('../../src/adloader');
+import * as utils from 'src/utils';
+import * as adLoader from 'src/adloader';
 
-  describe('trackPixel', function () {
-    it('correctly appends a cachebuster query paramter to a pixel with no existing parameters', function () {
-      var inputUrl = 'http://www.example.com/tracking_pixel',
-        token = '?rnd=',
-        expectedPartialUrl = inputUrl + token,
-        actual = adLoader.trackPixel(inputUrl),
-        actualPartialUrl = actual.split(token)[0] + token,
-        randomNumber = parseInt(actual.split(token)[1]);
-      assert.strictEqual(actualPartialUrl, expectedPartialUrl);
-      assert.isNumber(randomNumber);
+describe('adLoader', function () {
+  let utilsinsertElementStub;
+  let utilsLogErrorStub;
+
+  beforeEach(function () {
+    utilsinsertElementStub = sinon.stub(utils, 'insertElement');
+    utilsLogErrorStub = sinon.stub(utils, 'logError');
+  });
+
+  afterEach(function () {
+    utilsinsertElementStub.restore();
+    utilsLogErrorStub.restore();
+  });
+
+  describe('loadExternalScript', function () {
+    it('requires moduleCode to be included on the request', function () {
+      adLoader.loadExternalScript('someURL');
+      expect(utilsLogErrorStub.called).to.be.true;
+      expect(utilsinsertElementStub.called).to.be.false;
+    });
+
+    it('only allows whitelisted vendors to load scripts', function () {
+      adLoader.loadExternalScript('someURL', 'criteo');
+      expect(utilsLogErrorStub.called).to.be.false;
+      expect(utilsinsertElementStub.called).to.be.true;
     });
   });
-
-  it('correctly appends a cachebuster query paramter to a pixel with one existing parameter', function () {
-    var inputUrl = 'http://www.example.com/tracking_pixel?food=bard',
-      token = '&rnd=',
-      expectedPartialUrl = inputUrl + token,
-      actual = adLoader.trackPixel(inputUrl),
-      actualPartialUrl = actual.split(token)[0] + token,
-      randomNumber = parseInt(actual.split(token)[1]);
-    assert.strictEqual(actualPartialUrl, expectedPartialUrl);
-    assert.isNumber(randomNumber);
-  });
-
-  it('correctly appends a cachebuster query paramter to a pixel with multiple existing parameters', function () {
-    var inputUrl = 'http://www.example.com/tracking_pixel?food=bard&zing=zang',
-      token = '&rnd=',
-      expectedPartialUrl = inputUrl + token,
-      actual = adLoader.trackPixel(inputUrl),
-      actualPartialUrl = actual.split(token)[0] + token,
-      randomNumber = parseInt(actual.split(token)[1]);
-    assert.strictEqual(actualPartialUrl, expectedPartialUrl);
-    assert.isNumber(randomNumber);
-  });
-
 });
