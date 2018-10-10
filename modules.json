@@ -3,5 +3,6 @@
     "appnexusBidAdapter",
     "c1xBidAdapter",
     "openxBidAdapter",
-    "medianetBidAdapter"
+    "medianetBidAdapter",
+    "districtmDMXBidAdapter"
 ]
