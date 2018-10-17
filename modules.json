@@ -4,5 +4,6 @@
     "c1xBidAdapter",
     "openxBidAdapter",
     "medianetBidAdapter",
-    "districtmDMXBidAdapter"
+    "districtmDMXBidAdapter",
+    "33acrossBidAdapter"
 ]
