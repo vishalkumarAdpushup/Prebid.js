@@ -231,13 +231,15 @@ function dataAsset(id, params, type, defaultLen) {
 function site(bidderRequest) {
   const pubId = bidderRequest && bidderRequest.length > 0 ? bidderRequest[0].params.cp : '0';
   const appParams = bidderRequest[0].params.app;
+  const referrer = bidderRequest[0].params.referrer;
+  const pageUrl = bidderRequest[0].params.pageUrl;
   if (!appParams) {
     return {
       publisher: {
         id: pubId.toString(),
       },
-      ref: referrer(),
-      page: utils.getTopWindowLocation().href,
+      ref: referrer,
+      page: pageUrl,
     }
   }
   return null;

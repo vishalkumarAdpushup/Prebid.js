@@ -7,8 +7,16 @@ import includes from 'core-js/library/fn/array/includes';
 
 const BIDDER_CODE = 'appnexus';
 const URL = '//ib.adnxs.com/ut/v3/prebid';
-const VIDEO_TARGETING = ['id', 'mimes', 'minduration', 'maxduration',
-  'startdelay', 'skippable', 'playback_method', 'frameworks'];
+const VIDEO_TARGETING = [
+  'id',
+  'mimes',
+  'minduration',
+  'maxduration',
+  'startdelay',
+  'skippable',
+  'playback_method',
+  'frameworks'
+];
 const USER_PARAMS = ['age', 'external_uid', 'segments', 'gender', 'dnt', 'language'];
 const APP_DEVICE_PARAMS = ['geo', 'device_id']; // appid is collected separately
 const NATIVE_MAPPING = {
@@ -17,20 +25,31 @@ const NATIVE_MAPPING = {
   image: {
     serverName: 'main_image',
     requiredParams: { required: true },
-    minimumParams: { sizes: [{}] },
+    minimumParams: { sizes: [{}] }
   },
   icon: {
     serverName: 'icon',
     requiredParams: { required: true },
-    minimumParams: { sizes: [{}] },
+    minimumParams: { sizes: [{}] }
   },
-  sponsoredBy: 'sponsored_by',
+  sponsoredBy: 'sponsored_by'
 };
 const SOURCE = 'pbjs';
 
 export const spec = {
   code: BIDDER_CODE,
-  aliases: ['appnexusAst', 'brealtime', 'emxdigital', 'pagescience', 'defymedia', 'gourmetads', 'matomy', 'featureforward', 'oftmedia', 'districtm'],
+  aliases: [
+    'appnexusAst',
+    'brealtime',
+    'emxdigital',
+    'pagescience',
+    'defymedia',
+    'gourmetads',
+    'matomy',
+    'featureforward',
+    'oftmedia',
+    'districtm'
+  ],
   supportedMediaTypes: [BANNER, VIDEO, NATIVE],
 
   /**
@@ -57,7 +76,7 @@ export const spec = {
       userObj = {};
       Object.keys(userObjBid.params.user)
         .filter(param => includes(USER_PARAMS, param))
-        .forEach(param => userObj[param] = userObjBid.params.user[param]);
+        .forEach(param => (userObj[param] = userObjBid.params.user[param]));
     }
 
     const appDeviceObjBid = find(bidRequests, hasAppDeviceInfo);
@@ -66,7 +85,7 @@ export const spec = {
       appDeviceObj = {};
       Object.keys(appDeviceObjBid.params.app)
         .filter(param => includes(APP_DEVICE_PARAMS, param))
-        .forEach(param => appDeviceObj[param] = appDeviceObjBid.params.app[param]);
+        .forEach(param => (appDeviceObj[param] = appDeviceObjBid.params.app[param]));
     }
 
     const appIdObjBid = find(bidRequests, hasAppId);
@@ -93,7 +112,7 @@ export const spec = {
     }
 
     if (appDeviceObjBid) {
-      payload.device = appDeviceObj
+      payload.device = appDeviceObj;
     }
     if (appIdObjBid) {
       payload.app = appIdObj;
@@ -112,8 +131,8 @@ export const spec = {
         rd_ref: encodeURIComponent(bidderRequest.refererInfo.referer),
         rd_top: bidderRequest.refererInfo.reachedTop,
         rd_ifs: bidderRequest.refererInfo.numIframes,
-        rd_stk: bidderRequest.refererInfo.stack.map((url) => encodeURIComponent(url)).join(',')
-      }
+        rd_stk: bidderRequest.refererInfo.stack.map(url => encodeURIComponent(url)).join(',')
+      };
       payload.referrer_detection = refererinfo;
     }
 
@@ -132,12 +151,14 @@ export const spec = {
    * @param {*} serverResponse A successful response from the server.
    * @return {Bid[]} An array of bids which were nested inside the server.
    */
-  interpretResponse: function(serverResponse, {bidderRequest}) {
+  interpretResponse: function(serverResponse, { bidderRequest }) {
     serverResponse = serverResponse.body;
     const bids = [];
     if (!serverResponse || serverResponse.error) {
       let errorMessage = `in response for ${bidderRequest.bidderCode} adapter`;
-      if (serverResponse && serverResponse.error) { errorMessage += `: ${serverResponse.error}`; }
+      if (serverResponse && serverResponse.error) {
+        errorMessage += `: ${serverResponse.error}`;
+      }
       utils.logError(errorMessage);
       return bids;
     }
@@ -159,24 +180,31 @@ export const spec = {
 
   getUserSyncs: function(syncOptions) {
     if (syncOptions.iframeEnabled) {
-      return [{
-        type: 'iframe',
-        url: '//acdn.adnxs.com/ib/static/usersync/v3/async_usersync.html'
-      }];
+      return [
+        {
+          type: 'iframe',
+          url: '//acdn.adnxs.com/ib/static/usersync/v3/async_usersync.html'
+        }
+      ];
     }
   },
 
   transformBidParams: function(params, isOpenRtb) {
-    params = utils.convertTypes({
-      'member': 'string',
-      'invCode': 'string',
-      'placementId': 'number',
-      'keywords': utils.transformBidderParamKeywords
-    }, params);
+    params = utils.convertTypes(
+      {
+        member: 'string',
+        invCode: 'string',
+        placementId: 'number',
+        keywords: utils.transformBidderParamKeywords
+      },
+      params
+    );
 
     if (isOpenRtb) {
-      params.use_pmt_rule = (typeof params.usePaymentRule === 'boolean') ? params.usePaymentRule : false;
-      if (params.usePaymentRule) { delete params.usePaymentRule; }
+      params.use_pmt_rule = typeof params.usePaymentRule === 'boolean' ? params.usePaymentRule : false;
+      if (params.usePaymentRule) {
+        delete params.usePaymentRule;
+      }
 
       Object.keys(params).forEach(paramKey => {
         let convertedKey = utils.convertCamelToUnderscore(paramKey);
@@ -189,14 +217,14 @@ export const spec = {
 
     return params;
   }
-}
+};
 
 function newRenderer(adUnitCode, rtbBid, rendererOptions = {}) {
   const renderer = Renderer.install({
     id: rtbBid.renderer_id,
     url: rtbBid.renderer_url,
     config: rendererOptions,
-    loaded: false,
+    loaded: false
   });
 
   try {
@@ -247,10 +275,7 @@ function newBid(serverBid, rtbBid, bidderRequest) {
     });
     // This supports Outstream Video
     if (rtbBid.renderer_url) {
-      const rendererOptions = utils.deepAccess(
-        bidderRequest.bids[0],
-        'renderer.options'
-      );
+      const rendererOptions = utils.deepAccess(bidderRequest.bids[0], 'renderer.options');
 
       Object.assign(bid, {
         adResponse: serverBid,
@@ -269,20 +294,20 @@ function newBid(serverBid, rtbBid, bidderRequest) {
       clickUrl: nativeAd.link.url,
       clickTrackers: nativeAd.link.click_trackers,
       impressionTrackers: nativeAd.impression_trackers,
-      javascriptTrackers: nativeAd.javascript_trackers,
+      javascriptTrackers: nativeAd.javascript_trackers
     };
     if (nativeAd.main_img) {
       bid['native'].image = {
         url: nativeAd.main_img.url,
         height: nativeAd.main_img.height,
-        width: nativeAd.main_img.width,
+        width: nativeAd.main_img.width
       };
     }
     if (nativeAd.icon) {
       bid['native'].icon = {
         url: nativeAd.icon.url,
         height: nativeAd.icon.height,
-        width: nativeAd.icon.width,
+        width: nativeAd.icon.width
       };
     }
   } else {
@@ -315,14 +340,14 @@ function bidToTag(bid) {
     tag.code = bid.params.invCode;
   }
   tag.allow_smaller_sizes = bid.params.allowSmallerSizes || false;
-  tag.use_pmt_rule = bid.params.usePaymentRule || false
+  tag.use_pmt_rule = bid.params.usePaymentRule || false;
   tag.prebid = true;
   tag.disable_psa = true;
   if (bid.params.reserve) {
     tag.reserve = bid.params.reserve;
   }
   if (bid.params.position) {
-    tag.position = {'above': 1, 'below': 2}[bid.params.position] || 0;
+    tag.position = { above: 1, below: 2 }[bid.params.position] || 0;
   }
   if (bid.params.trafficSourceCode) {
     tag.traffic_source_code = bid.params.trafficSourceCode;
@@ -351,7 +376,7 @@ function bidToTag(bid) {
 
     if (bid.nativeParams) {
       const nativeRequest = buildNativeRequest(bid.nativeParams);
-      tag[NATIVE] = {layouts: [nativeRequest]};
+      tag[NATIVE] = { layouts: [nativeRequest] };
     }
   }
 
@@ -372,7 +397,7 @@ function bidToTag(bid) {
     // place any valid video params on the tag
     Object.keys(bid.params.video)
       .filter(param => includes(VIDEO_TARGETING, param))
-      .forEach(param => tag.video[param] = bid.params.video[param]);
+      .forEach(param => (tag.video[param] = bid.params.video[param]));
   }
 
   if (
@@ -390,8 +415,7 @@ function transformSizes(requestSizes) {
   let sizes = [];
   let sizeObj = {};
 
-  if (utils.isArray(requestSizes) && requestSizes.length === 2 &&
-    !utils.isArray(requestSizes[0])) {
+  if (utils.isArray(requestSizes) && requestSizes.length === 2 && !utils.isArray(requestSizes[0])) {
     sizeObj.width = parseInt(requestSizes[0], 10);
     sizeObj.height = parseInt(requestSizes[1], 10);
     sizes.push(sizeObj);
@@ -418,15 +442,15 @@ function hasMemberId(bid) {
 
 function hasAppDeviceInfo(bid) {
   if (bid.params) {
-    return !!bid.params.app
+    return !!bid.params.app;
   }
 }
 
 function hasAppId(bid) {
   if (bid.params && bid.params.app) {
-    return !!bid.params.app.id
+    return !!bid.params.app.id;
   }
-  return !!bid.params.app
+  return !!bid.params.app;
 }
 
 function getRtbBid(tag) {
@@ -443,10 +467,7 @@ function buildNativeRequest(params) {
   Object.keys(params).forEach(key => {
     // check if one of the <server name> forms is used, otherwise
     // a mapping wasn't specified so pass the key straight through
-    const requestKey =
-      (NATIVE_MAPPING[key] && NATIVE_MAPPING[key].serverName) ||
-      NATIVE_MAPPING[key] ||
-      key;
+    const requestKey = (NATIVE_MAPPING[key] && NATIVE_MAPPING[key].serverName) || NATIVE_MAPPING[key] || key;
 
     // required params are always passed on request
     const requiredParams = NATIVE_MAPPING[key] && NATIVE_MAPPING[key].requiredParams;
@@ -474,14 +495,17 @@ function buildNativeRequest(params) {
 function outstreamRender(bid) {
   // push to render queue because ANOutstreamVideo may not be loaded yet
   bid.renderer.push(() => {
-    window.ANOutstreamVideo.renderAd({
-      tagId: bid.adResponse.tag_id,
-      sizes: [bid.getSize().split('x')],
-      targetId: bid.adUnitCode, // target div id to render video
-      uuid: bid.adResponse.uuid,
-      adResponse: bid.adResponse,
-      rendererOptions: bid.renderer.getConfig()
-    }, handleOutstreamRendererEvents.bind(null, bid));
+    window.ANOutstreamVideo.renderAd(
+      {
+        tagId: bid.adResponse.tag_id,
+        sizes: [bid.getSize().split('x')],
+        targetId: bid.adUnitCode, // target div id to render video
+        uuid: bid.adResponse.uuid,
+        adResponse: bid.adResponse,
+        rendererOptions: bid.renderer.getConfig()
+      },
+      handleOutstreamRendererEvents.bind(null, bid)
+    );
   });
 }
 
