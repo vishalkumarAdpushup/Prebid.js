@@ -1,10 +1,11 @@
 [
-	"pulsepointBidAdapter",
-	"appnexusBidAdapter",
-	"c1xBidAdapter",
-	"openxBidAdapter",
-	"medianetBidAdapter",
-	"districtmDMXBidAdapter",
-	"33acrossBidAdapter",
-	"conversantBidAdapter"
+    "pulsepointBidAdapter",
+    "appnexusBidAdapter",
+    "c1xBidAdapter",
+    "openxBidAdapter",
+    "medianetBidAdapter",
+    "districtmDMXBidAdapter",
+    "33acrossBidAdapter",
+    "conversantBidAdapter",
+    "criteoBidAdapter"
 ]
