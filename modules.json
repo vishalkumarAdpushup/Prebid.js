@@ -1,6 +1,6 @@
 [
-	"pulsepointBidAdapter",
-	"appnexusBidAdapter",
-	"c1xBidAdapter",
-	"33acrossBidAdapter"
+    "appnexusBidAdapter",
+    "33acrossBidAdapter",
+    "districtmDMXBidAdapter",
+    "ixBidAdapter"
 ]
