@@ -1,13 +1,14 @@
 [
-	"pulsepointBidAdapter",
-	"appnexusBidAdapter",
-	"c1xBidAdapter",
-	"openxBidAdapter",
-	"medianetBidAdapter",
-	"districtmDMXBidAdapter",
-	"33acrossBidAdapter",
-	"conversantBidAdapter",
-	"criteoBidAdapter",
-	"ixBidAdapter",
-	"currency"
+    "pulsepointBidAdapter",
+    "appnexusBidAdapter",
+    "c1xBidAdapter",
+    "openxBidAdapter",
+    "medianetBidAdapter",
+    "districtmDMXBidAdapter",
+    "33acrossBidAdapter",
+    "conversantBidAdapter",
+    "criteoBidAdapter",
+    "ixBidAdapter",
+    "rubiconBidAdapter",
+    "currency"
 ]
