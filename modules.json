@@ -1,7 +1,6 @@
 [
     "pulsepointBidAdapter",
     "appnexusBidAdapter",
-    "openxBidAdapter",
     "medianetBidAdapter",
     "districtmDMXBidAdapter",
     "33acrossBidAdapter",
