@@ -17,7 +17,7 @@ export const spec = {
    * @param {BidRequest} bid The bid params to validate.
    * @return boolean True if this is a valid bid, and false otherwise.
    */
-  isBidRequestValid: function (bid) {
+  isBidRequestValid: function(bid) {
     const sizes = getSize(bid.sizes);
     if (!bid.params || !bid.params.placement || !sizes.width || !sizes.height) {
       return false;
@@ -30,7 +30,7 @@ export const spec = {
    * @param {bidRequests} - bidRequests.bids[] is an array of AdUnits and bids
    * @return ServerRequest Info describing the request to the server.
    */
-  buildRequests: function (bidRequests, bidderRequest) {
+  buildRequests: function(bidRequests, bidderRequest) {
     let dcHostname = getHostname(bidRequests);
     const payload = {
       Version: VERSION,
@@ -49,7 +49,8 @@ export const spec = {
     if (bidderRequest && bidderRequest.gdprConsent) {
       payload.gdprConsent = {
         consentString: bidderRequest.gdprConsent.consentString,
-        consentRequired: (typeof bidderRequest.gdprConsent.gdprApplies === 'boolean') ? bidderRequest.gdprConsent.gdprApplies : true
+        consentRequired:
+          typeof bidderRequest.gdprConsent.gdprApplies === 'boolean' ? bidderRequest.gdprConsent.gdprApplies : true
       };
     }
 
@@ -71,7 +72,7 @@ export const spec = {
    * @param {*} serverResponse A successful response from the server.
    * @return {Bid[]} An array of bids which were nested inside the server.
    */
-  interpretResponse: function (serverResponse, bidRequest) {
+  interpretResponse: function(serverResponse, bidRequest) {
     const bidResponses = [];
     // For this adapter, serverResponse is a list
     serverResponse.body.forEach(response => {
@@ -82,13 +83,13 @@ export const spec = {
     });
     return bidResponses;
   }
-}
+};
 
 /* Get hostname from bids */
 function getHostname(bidderRequest) {
   let dcHostname = find(bidderRequest, bid => bid.params.DC);
   if (dcHostname) {
-    return ('-' + dcHostname.params.DC);
+    return '-' + dcHostname.params.DC;
   }
   return '';
 }
@@ -99,7 +100,7 @@ function getReferrerUrl() {
   if (window.self !== window.top) {
     try {
       referer = window.top.document.referrer;
-    } catch (e) { }
+    } catch (e) {}
   } else {
     referer = document.referrer;
   }
@@ -112,7 +113,7 @@ function getCanonicalUrl() {
   if (window.self !== window.top) {
     try {
       link = window.top.document.head.querySelector('link[rel="canonical"][href]');
-    } catch (e) { }
+    } catch (e) {}
   } else {
     link = document.head.querySelector('link[rel="canonical"][href]');
   }
@@ -129,14 +130,14 @@ function getPageRefreshed() {
     if (performance && performance.navigation) {
       return performance.navigation.type === performance.navigation.TYPE_RELOAD;
     }
-  } catch (e) { }
+  } catch (e) {}
   return false;
 }
 
 /* Create endpoint url */
 function createEndpoint(host) {
   return format({
-    protocol: (document.location.protocol === 'https:') ? 'https' : 'http',
+    protocol: document.location.protocol === 'https:' ? 'https' : 'http',
     host: `${DEFAULT_DC}${host}.omnitagjs.com`,
     pathname: '/hb-api/prebid/v1',
     search: createEndpointQS()
@@ -147,12 +148,14 @@ function createEndpoint(host) {
 function createEndpointQS() {
   const qs = {};
 
-  const ref = getReferrerUrl();
+  /* const ref = getReferrerUrl(); */
+  const ref = utils.utils.getTopWindowReferrer();
   if (ref) {
     qs.RefererUrl = encodeURIComponent(ref);
   }
 
-  const can = getCanonicalUrl();
+  /* const can = getCanonicalUrl(); */
+  const can = utils.getTopWindowUrl();
   if (can) {
     qs.CanonicalUrl = encodeURIComponent(can);
   }
@@ -186,7 +189,7 @@ function getSize(requestSizes) {
 /* Create bid from response */
 function createBid(response) {
   if (!response || !response.Ad) {
-    return
+    return;
   }
 
   return {
