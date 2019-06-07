@@ -1,6 +1,9 @@
 [
-    "appnexusBidAdapter",
-    "33acrossBidAdapter",
-    "districtmDMXBidAdapter",
-    "ixBidAdapter"
+	"appnexusBidAdapter",
+	"33acrossBidAdapter",
+	"ixBidAdapter",
+	"rubiconBidAdapter",
+	"pubmaticBidAdapter",
+	"adyoulikeBidAdapter",
+	"aardvarkBidAdapter"
 ]
