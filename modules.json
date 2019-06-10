@@ -10,5 +10,6 @@
     "rubiconBidAdapter",
     "currency",
     "adyoulikeBidAdapter",
-    "pubmaticBidAdapter"
+    "pubmaticBidAdapter",
+    "aardvarkBidAdapter"
 ]
