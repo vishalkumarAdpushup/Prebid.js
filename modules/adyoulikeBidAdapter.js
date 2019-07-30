@@ -149,7 +149,7 @@ function createEndpointQS() {
   const qs = {};
 
   /* const ref = getReferrerUrl(); */
-  const ref = utils.utils.getTopWindowReferrer();
+  const ref = utils.getTopWindowReferrer();
   if (ref) {
     qs.RefererUrl = encodeURIComponent(ref);
   }
