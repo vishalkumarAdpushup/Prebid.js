@@ -6,5 +6,6 @@
 	"pubmaticBidAdapter",
 	"adyoulikeBidAdapter",
 	"aardvarkBidAdapter",
-	"criteoBidAdapter"
+	"criteoBidAdapter",
+	"sovrnBidAdapter"
 ]
