@@ -8,5 +8,7 @@
 	"aardvarkBidAdapter",
 	"criteoBidAdapter",
 	"sovrnBidAdapter",
-	"eplanningBidAdapter"
+	"eplanningBidAdapter",
+	"adkernelBidAdapter",
+	"lockerdomeBidAdapter"
 ]
