@@ -1,14 +1,12 @@
 [
 	"appnexusBidAdapter",
-	"33acrossBidAdapter",
 	"ixBidAdapter",
 	"rubiconBidAdapter",
 	"pubmaticBidAdapter",
 	"adyoulikeBidAdapter",
-	"aardvarkBidAdapter",
 	"criteoBidAdapter",
 	"sovrnBidAdapter",
-	"eplanningBidAdapter",
 	"adkernelBidAdapter",
-	"lockerdomeBidAdapter"
+	"gumgumBidAdapter",
+	"aolBidAdapter"
 ]
