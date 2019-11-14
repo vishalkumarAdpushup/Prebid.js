@@ -1,106 +1,108 @@
-import * as utils from 'src/utils'
+import * as utils from 'src/utils';
 
-import { config } from 'src/config'
-import { registerBidder } from 'src/adapters/bidderFactory'
+import { config } from 'src/config';
+import { registerBidder } from 'src/adapters/bidderFactory';
 import includes from 'core-js/library/fn/array/includes';
 
-const BIDDER_CODE = 'gumgum'
-const ALIAS_BIDDER_CODE = ['gg']
-const BID_ENDPOINT = `https://g2.gumgum.com/hbid/imp`
-const DT_CREDENTIALS = { member: 'YcXr87z2lpbB' }
-const TIME_TO_LIVE = 60
+const BIDDER_CODE = 'gumgum';
+const ALIAS_BIDDER_CODE = ['gg'];
+const BID_ENDPOINT = `https://g2.gumgum.com/hbid/imp`;
+const DT_CREDENTIALS = { member: 'YcXr87z2lpbB' };
+const TIME_TO_LIVE = 60;
 
 let browserParams = {};
-let pageViewId = null
+let pageViewId = null;
 
-function hasTopAccess () {
-  var hasTopAccess = false
-  try { hasTopAccess = !!top.document } catch (e) {}
-  return hasTopAccess
-}
-
-function isInSafeFrame (windowRef) {
-  const w = windowRef || window
-  if (w.$sf) return w.$sf
-  else if (hasTopAccess() && w !== top) return isInSafeFrame(w.parent)
-  return null
-}
-
-function getGoogleTag (windowRef) {
+function hasTopAccess() {
+  var hasTopAccess = false;
   try {
-    const w = windowRef || window
-    var GOOGLETAG = null
+    hasTopAccess = !!top.document;
+  } catch (e) {}
+  return hasTopAccess;
+}
+
+function isInSafeFrame(windowRef) {
+  const w = windowRef || window;
+  if (w.$sf) return w.$sf;
+  else if (hasTopAccess() && w !== top) return isInSafeFrame(w.parent);
+  return null;
+}
+
+function getGoogleTag(windowRef) {
+  try {
+    const w = windowRef || window;
+    var GOOGLETAG = null;
     if ('googletag' in w) {
-      GOOGLETAG = w.googletag
+      GOOGLETAG = w.googletag;
     } else if (w !== top) {
-      GOOGLETAG = getGoogleTag(w.parent)
+      GOOGLETAG = getGoogleTag(w.parent);
     }
-    return GOOGLETAG
+    return GOOGLETAG;
   } catch (error) {
-    utils.logError('Error getting googletag ', error)
-    return null
+    utils.logError('Error getting googletag ', error);
+    return null;
   }
 }
 
-function getAMPContext (windowRef) {
-  const w = windowRef || window
-  var context = null
-  var nameJSON = null
+function getAMPContext(windowRef) {
+  const w = windowRef || window;
+  var context = null;
+  var nameJSON = null;
   if (utils.isPlainObject(w.context)) {
-    context = w.context
+    context = w.context;
   } else {
     try {
-      nameJSON = JSON.parse(w.name || null)
+      nameJSON = JSON.parse(w.name || null);
     } catch (error) {
-      utils.logError('Error getting w.name', error)
+      utils.logError('Error getting w.name', error);
     }
     if (utils.isPlainObject(nameJSON)) {
-      context = nameJSON._context || (nameJSON.attributes ? nameJSON.attributes._context : null)
+      context = nameJSON._context || (nameJSON.attributes ? nameJSON.attributes._context : null);
     }
     if (utils.isPlainObject(w.AMP_CONTEXT_DATA)) {
-      context = w.AMP_CONTEXT_DATA
+      context = w.AMP_CONTEXT_DATA;
     }
   }
-  return context
+  return context;
 }
 
-function getJCSI () {
-  const entrypointOffset = 7
-  const inFrame = (window.top && window.top !== window)
-  const frameType = (!inFrame ? 1 : (isInSafeFrame() ? 2 : (hasTopAccess() ? 3 : 4)))
-  const context = []
+function getJCSI() {
+  const entrypointOffset = 7;
+  const inFrame = window.top && window.top !== window;
+  const frameType = !inFrame ? 1 : isInSafeFrame() ? 2 : hasTopAccess() ? 3 : 4;
+  const context = [];
   if (getAMPContext()) {
-    context.push(1)
+    context.push(1);
   }
   if (getGoogleTag()) {
-    context.push(2)
+    context.push(2);
   }
   const jcsi = {
     ep: entrypointOffset,
     fc: frameType,
     ctx: context
-  }
-  return JSON.stringify(jcsi)
+  };
+  return JSON.stringify(jcsi);
 }
 
 // TODO: potential 0 values for browserParams sent to ad server
 function _getBrowserParams() {
-  let topWindow
-  let topScreen
-  let topUrl
-  let ggad
+  let topWindow;
+  let topScreen;
+  let topUrl;
+  let ggad;
   if (browserParams.vw) {
     // we've already initialized browserParams, just return it.
-    return browserParams
+    return browserParams;
   }
 
   try {
     topWindow = global.top;
     topScreen = topWindow.screen;
-    topUrl = utils.getTopWindowUrl()
+    topUrl = utils.getTopWindowUrl();
   } catch (error) {
     utils.logError(error);
-    return browserParams
+    return browserParams;
   }
 
   browserParams = {
@@ -112,24 +114,24 @@ function _getBrowserParams() {
     ce: utils.cookiesAreEnabled(),
     dpr: topWindow.devicePixelRatio || 1,
     jcsi: getJCSI()
-  }
-  ggad = (topUrl.match(/#ggad=(\w+)$/) || [0, 0])[1]
+  };
+  ggad = (topUrl.match(/#ggad=(\w+)$/) || [0, 0])[1];
   if (ggad) {
-    browserParams[isNaN(ggad) ? 'eAdBuyId' : 'adBuyId'] = ggad
+    browserParams[isNaN(ggad) ? 'eAdBuyId' : 'adBuyId'] = ggad;
   }
-  return browserParams
+  return browserParams;
 }
 
 function getWrapperCode(wrapper, data) {
-  return wrapper.replace('AD_JSON', window.btoa(JSON.stringify(data)))
+  return wrapper.replace('AD_JSON', window.btoa(JSON.stringify(data)));
 }
 
 // TODO: use getConfig()
 function _getDigiTrustQueryParams() {
-  function getDigiTrustId () {
-    var digiTrustUser = (window.DigiTrust && window.DigiTrust.getUser) ? window.DigiTrust.getUser(DT_CREDENTIALS) : {};
+  function getDigiTrustId() {
+    var digiTrustUser = window.DigiTrust && window.DigiTrust.getUser ? window.DigiTrust.getUser(DT_CREDENTIALS) : {};
     return (digiTrustUser && digiTrustUser.success && digiTrustUser.identity) || '';
-  };
+  }
 
   let digiTrustId = getDigiTrustId();
   // Verify there is an ID and this user has not opted out
@@ -147,16 +149,16 @@ function _getDigiTrustQueryParams() {
  * @param {BidRequest} bid The bid params to validate.
  * @return boolean True if this is a valid bid, and false otherwise.
  */
-function isBidRequestValid (bid) {
-  const {
-    params,
-    adUnitCode
-  } = bid;
+function isBidRequestValid(bid) {
+  const { params, adUnitCode } = bid;
 
   switch (true) {
-    case !!(params.inScreen): break;
-    case !!(params.inSlot): break;
-    case !!(params.ICV): break;
+    case !!params.inScreen:
+      break;
+    case !!params.inSlot:
+      break;
+    case !!params.ICV:
+      break;
     default:
       utils.logWarn(`[GumGum] No product selected for the placement ${adUnitCode}, please check your implementation.`);
       return false;
@@ -170,19 +172,15 @@ function isBidRequestValid (bid) {
  * @param {validBidRequests[]} - an array of bids
  * @return ServerRequest Info describing the request to the server.
  */
-function buildRequests (validBidRequests, bidderRequest) {
+function buildRequests(validBidRequests, bidderRequest) {
   const bids = [];
-  const gdprConsent = Object.assign({ consentString: null, gdprApplies: true }, bidderRequest && bidderRequest.gdprConsent)
+  const gdprConsent = Object.assign({ consentString: null, gdprApplies: true }, bidderRequest && bidderRequest.gdprConsent);
   utils._each(validBidRequests, bidRequest => {
     const timeout = config.getConfig('bidderTimeout');
-    const {
-      bidId,
-      params = {},
-      transactionId
-    } = bidRequest;
-    const data = {}
+    const { bidId, params = {}, transactionId } = bidRequest;
+    const data = {};
     if (pageViewId) {
-      data.pv = pageViewId
+      data.pv = pageViewId;
     }
     if (params.inScreen) {
       data.t = params.inScreen;
@@ -201,6 +199,8 @@ function buildRequests (validBidRequests, bidderRequest) {
       data.gdprConsent = gdprConsent.consentString;
     }
 
+    var browserParams = _getBrowserParams();
+    browserParams.pu = params.url;
     bids.push({
       id: bidId,
       tmax: timeout,
@@ -210,8 +210,8 @@ function buildRequests (validBidRequests, bidderRequest) {
       sizes: bidRequest.sizes,
       url: BID_ENDPOINT,
       method: 'GET',
-      data: Object.assign(data, _getBrowserParams(), _getDigiTrustQueryParams())
-    })
+      data: Object.assign(data, browserParams, _getDigiTrustQueryParams())
+    });
   });
   return bids;
 }
@@ -222,9 +222,9 @@ function buildRequests (validBidRequests, bidderRequest) {
  * @param {*} serverResponse A successful response from the server.
  * @return {Bid[]} An array of bids which were nested inside the server.
  */
-function interpretResponse (serverResponse, bidRequest) {
-  const bidResponses = []
-  const serverResponseBody = serverResponse.body
+function interpretResponse(serverResponse, bidRequest) {
+  const bidResponses = [];
+  const serverResponseBody = serverResponse.body;
   const defaultResponse = {
     ad: {
       price: 0,
@@ -234,32 +234,26 @@ function interpretResponse (serverResponse, bidRequest) {
     pag: {
       pvid: 0
     }
-  }
+  };
   const {
-    ad: {
-      price: cpm,
-      id: creativeId,
-      markup
-    },
+    ad: { price: cpm, id: creativeId, markup },
     cw: wrapper,
-    pag: {
-      pvid
-    }
-  } = Object.assign(defaultResponse, serverResponseBody)
-  let data = bidRequest.data || {}
-  let product = data.pi
-  let isTestUnit = (product === 3 && data.si === 9)
-  let sizes = utils.parseSizesInput(bidRequest.sizes)
-  let [width, height] = sizes[0].split('x')
+    pag: { pvid }
+  } = Object.assign(defaultResponse, serverResponseBody);
+  let data = bidRequest.data || {};
+  let product = data.pi;
+  let isTestUnit = product === 3 && data.si === 9;
+  let sizes = utils.parseSizesInput(bidRequest.sizes);
+  let [width, height] = sizes[0].split('x');
 
   // return 1x1 when breakout expected
   if ((product === 2 || product === 5) && includes(sizes, '1x1')) {
-    width = '1'
-    height = '1'
+    width = '1';
+    height = '1';
   }
 
   // update Page View ID from server response
-  pageViewId = pvid
+  pageViewId = pvid;
 
   if (creativeId) {
     bidResponses.push({
@@ -274,9 +268,9 @@ function interpretResponse (serverResponse, bidRequest) {
       requestId: bidRequest.id,
       ttl: TIME_TO_LIVE,
       width
-    })
+    });
   }
-  return bidResponses
+  return bidResponses;
 }
 
 /**
@@ -286,19 +280,19 @@ function interpretResponse (serverResponse, bidRequest) {
  * @param {ServerResponse[]} serverResponses List of server's responses.
  * @return {UserSync[]} The user syncs which should be dropped.
  */
-function getUserSyncs (syncOptions, serverResponses) {
-  const responses = serverResponses.map((response) => {
-    return (response.body && response.body.pxs && response.body.pxs.scr) || []
-  })
-  const userSyncs = responses.reduce(function (usersyncs, response) {
-    return usersyncs.concat(response)
-  }, [])
-  const syncs = userSyncs.map((sync) => {
+function getUserSyncs(syncOptions, serverResponses) {
+  const responses = serverResponses.map(response => {
+    return (response.body && response.body.pxs && response.body.pxs.scr) || [];
+  });
+  const userSyncs = responses.reduce(function(usersyncs, response) {
+    return usersyncs.concat(response);
+  }, []);
+  const syncs = userSyncs.map(sync => {
     return {
       type: sync.t === 'f' ? 'iframe' : 'image',
       url: sync.u
-    }
-  })
+    };
+  });
   return syncs;
 }
 
@@ -309,5 +303,5 @@ export const spec = {
   buildRequests,
   interpretResponse,
   getUserSyncs
-}
-registerBidder(spec)
+};
+registerBidder(spec);
