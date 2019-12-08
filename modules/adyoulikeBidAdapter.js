@@ -17,7 +17,7 @@ export const spec = {
    * @param {BidRequest} bid The bid params to validate.
    * @return boolean True if this is a valid bid, and false otherwise.
    */
-  isBidRequestValid: function (bid) {
+  isBidRequestValid: function(bid) {
     const sizes = getSize(getSizeArray(bid));
     if (!bid.params || !bid.params.placement || !sizes.width || !sizes.height) {
       return false;
@@ -30,7 +30,7 @@ export const spec = {
    * @param {bidRequests} - bidRequests.bids[] is an array of AdUnits and bids
    * @return ServerRequest Info describing the request to the server.
    */
-  buildRequests: function (bidRequests, bidderRequest) {
+  buildRequests: function(bidRequests, bidderRequest) {
     const payload = {
       Version: VERSION,
       Bids: bidRequests.reduce((accumulator, bid) => {
@@ -50,7 +50,10 @@ export const spec = {
     if (bidderRequest && bidderRequest.gdprConsent) {
       payload.gdprConsent = {
         consentString: bidderRequest.gdprConsent.consentString,
-        consentRequired: (typeof bidderRequest.gdprConsent.gdprApplies === 'boolean') ? bidderRequest.gdprConsent.gdprApplies : true
+        consentRequired:
+          typeof bidderRequest.gdprConsent.gdprApplies === 'boolean'
+            ? bidderRequest.gdprConsent.gdprApplies
+            : true
       };
     }
 
@@ -72,7 +75,7 @@ export const spec = {
    * @param {*} serverResponse A successful response from the server.
    * @return {Bid[]} An array of bids which were nested inside the server.
    */
-  interpretResponse: function (serverResponse, bidRequest) {
+  interpretResponse: function(serverResponse, bidRequest) {
     const bidResponses = [];
     // For this adapter, serverResponse is a list
     serverResponse.body.forEach(response => {
@@ -83,13 +86,13 @@ export const spec = {
     });
     return bidResponses;
   }
-}
+};
 
 /* Get hostname from bids */
 function getHostname(bidderRequest) {
   let dcHostname = find(bidderRequest, bid => bid.params.DC);
   if (dcHostname) {
-    return ('-' + dcHostname.params.DC);
+    return '-' + dcHostname.params.DC;
   }
   return '';
 }
@@ -108,8 +111,10 @@ function getCanonicalUrl() {
   let link;
   if (window.self !== window.top) {
     try {
-      link = window.top.document.head.querySelector('link[rel="canonical"][href]');
-    } catch (e) { }
+      link = window.top.document.head.querySelector(
+        'link[rel="canonical"][href]'
+      );
+    } catch (e) {}
   } else {
     link = document.head.querySelector('link[rel="canonical"][href]');
   }
@@ -126,7 +131,7 @@ function getPageRefreshed() {
     if (performance && performance.navigation) {
       return performance.navigation.type === performance.navigation.TYPE_RELOAD;
     }
-  } catch (e) { }
+  } catch (e) {}
   return false;
 }
 
@@ -150,10 +155,10 @@ function createEndpointQS(bidderRequest) {
     qs.RefererUrl = encodeURIComponent(ref);
   }
 
-  const can = getCanonicalUrl();
+  /* const can = getCanonicalUrl();
   if (can) {
     qs.CanonicalUrl = encodeURIComponent(can);
-  }
+  } */
 
   return qs;
 }
@@ -194,7 +199,7 @@ function getSize(sizesArray) {
 /* Create bid from response */
 function createBid(response) {
   if (!response || !response.Ad) {
-    return
+    return;
   }
 
   return {
