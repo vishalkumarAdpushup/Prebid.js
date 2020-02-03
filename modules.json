@@ -8,5 +8,7 @@
   "sovrnBidAdapter",
   "adkernelBidAdapter",
   "gumgumBidAdapter",
-  "aolBidAdapter"
+  "aolBidAdapter",
+  "consumableBidAdapter",
+  "schain"
 ]
