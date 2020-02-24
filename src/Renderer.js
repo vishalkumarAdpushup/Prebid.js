@@ -1,7 +1,7 @@
-import { loadExternalScript } from './adloader.js';
-import * as utils from './utils.js';
-import find from 'core-js/library/fn/array/find.js';
-const moduleCode = 'outstream';
+import { loadExternalScript } from "./adloader.js";
+import * as utils from "./utils.js";
+import find from "core-js/library/fn/array/find.js";
+const moduleCode = "outstream";
 
 /**
  * @typedef {object} Renderer
@@ -23,46 +23,59 @@ export function Renderer(options) {
   // queue will be processed
   this.loaded = loaded;
   this.cmd = [];
-  this.push = func => {
-    if (typeof func !== 'function') {
-      utils.logError('Commands given to Renderer.push must be wrapped in a function');
+  this.push = (func) => {
+    if (typeof func !== "function") {
+      utils.logError(
+        "Commands given to Renderer.push must be wrapped in a function"
+      );
       return;
     }
     this.loaded ? func.call() : this.cmd.push(func);
   };
 
   // bidders may override this with the `callback` property given to `install`
-  this.callback = callback || (() => {
-    this.loaded = true;
-    this.process();
-  });
+  this.callback =
+    callback ||
+    (() => {
+      this.loaded = true;
+      this.process();
+    });
 
   if (!isRendererDefinedOnAdUnit(adUnitCode)) {
     // we expect to load a renderer url once only so cache the request to load script
     loadExternalScript(url, moduleCode, this.callback);
   } else {
-    utils.logWarn(`External Js not loaded by Renderer since renderer url and callback is already defined on adUnit ${adUnitCode}`);
+    utils.logWarn(
+      `External Js not loaded by Renderer since renderer url and callback is already defined on adUnit ${adUnitCode}`
+    );
   }
 }
 
-Renderer.install = function({ url, config, id, callback, loaded, adUnitCode }) {
+Renderer.install = function ({
+  url,
+  config,
+  id,
+  callback,
+  loaded,
+  adUnitCode,
+}) {
   return new Renderer({ url, config, id, callback, loaded, adUnitCode });
 };
 
-Renderer.prototype.getConfig = function() {
+Renderer.prototype.getConfig = function () {
   return this.config;
 };
 
-Renderer.prototype.setRender = function(fn) {
+Renderer.prototype.setRender = function (fn) {
   this.render = fn;
 };
 
-Renderer.prototype.setEventHandlers = function(handlers) {
+Renderer.prototype.setEventHandlers = function (handlers) {
   this.handlers = handlers;
 };
 
-Renderer.prototype.handleVideoEvent = function({ id, eventName }) {
-  if (typeof this.handlers[eventName] === 'function') {
+Renderer.prototype.handleVideoEvent = function ({ id, eventName }) {
+  if (typeof this.handlers[eventName] === "function") {
     this.handlers[eventName]();
   }
 
@@ -73,12 +86,12 @@ Renderer.prototype.handleVideoEvent = function({ id, eventName }) {
  * Calls functions that were pushed to the command queue before the
  * renderer was loaded by `loadExternalScript`
  */
-Renderer.prototype.process = function() {
+Renderer.prototype.process = function () {
   while (this.cmd.length > 0) {
     try {
       this.cmd.shift().call();
     } catch (error) {
-      utils.logError('Error processing Renderer command: ', error);
+      utils.logError("Error processing Renderer command: ", error);
     }
   }
 };
@@ -88,8 +101,9 @@ Renderer.prototype.process = function() {
  * @param {Object} renderer Renderer object installed by adapter
  * @returns {Boolean}
  */
-export function isRendererRequired(renderer) {
-  return !!(renderer && renderer.url);
+export function isRendererRequired(renderer, bid) {
+  console.log("isRendererRequired called");
+  return !!(renderer && renderer.url && bid && bid.mediaType === "video");
 }
 
 /**
@@ -103,8 +117,13 @@ export function executeRenderer(renderer, bid) {
 
 function isRendererDefinedOnAdUnit(adUnitCode) {
   const adUnits = $$PREBID_GLOBAL$$.adUnits;
-  const adUnit = find(adUnits, adUnit => {
+  const adUnit = find(adUnits, (adUnit) => {
     return adUnit.code === adUnitCode;
   });
-  return !!(adUnit && adUnit.renderer && adUnit.renderer.url && adUnit.renderer.render);
+  return !!(
+    adUnit &&
+    adUnit.renderer &&
+    adUnit.renderer.url &&
+    adUnit.renderer.render
+  );
 }
