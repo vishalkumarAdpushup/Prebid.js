@@ -12,11 +12,11 @@ const moduleCode = 'outstream';
  */
 
 export function Renderer(options) {
-  const { url, config, id, callback, loaded, adUnitCode } = options;
-  this.url = url;
-  this.config = config;
-  this.handlers = {};
-  this.id = id;
+	const { url, config, id, callback, loaded, adUnitCode } = options;
+	this.url = url;
+	this.config = config;
+	this.handlers = {};
+	this.id = id;
 
   // a renderer may push to the command queue to delay rendering until the
   // render function is loaded by loadExternalScript, at which point the the command
@@ -31,11 +31,11 @@ export function Renderer(options) {
     this.loaded ? func.call() : this.cmd.push(func);
   };
 
-  // bidders may override this with the `callback` property given to `install`
+	// bidders may override this with the `callback` property given to `install`
   this.callback = callback || (() => {
     this.loaded = true;
-    this.process();
-  });
+			this.process();
+		});
 
   if (!isRendererDefinedOnAdUnit(adUnitCode)) {
     // we expect to load a renderer url once only so cache the request to load script
@@ -46,27 +46,27 @@ export function Renderer(options) {
 }
 
 Renderer.install = function({ url, config, id, callback, loaded, adUnitCode }) {
-  return new Renderer({ url, config, id, callback, loaded, adUnitCode });
+	return new Renderer({ url, config, id, callback, loaded, adUnitCode });
 };
 
 Renderer.prototype.getConfig = function() {
-  return this.config;
+	return this.config;
 };
 
 Renderer.prototype.setRender = function(fn) {
-  this.render = fn;
+	this.render = fn;
 };
 
 Renderer.prototype.setEventHandlers = function(handlers) {
-  this.handlers = handlers;
+	this.handlers = handlers;
 };
 
 Renderer.prototype.handleVideoEvent = function({ id, eventName }) {
-  if (typeof this.handlers[eventName] === 'function') {
-    this.handlers[eventName]();
-  }
+	if (typeof this.handlers[eventName] === 'function') {
+		this.handlers[eventName]();
+	}
 
-  utils.logMessage(`Prebid Renderer event for id ${id} type ${eventName}`);
+	utils.logMessage(`Prebid Renderer event for id ${id} type ${eventName}`);
 };
 
 /*
@@ -74,13 +74,13 @@ Renderer.prototype.handleVideoEvent = function({ id, eventName }) {
  * renderer was loaded by `loadExternalScript`
  */
 Renderer.prototype.process = function() {
-  while (this.cmd.length > 0) {
-    try {
-      this.cmd.shift().call();
-    } catch (error) {
-      utils.logError('Error processing Renderer command: ', error);
-    }
-  }
+	while (this.cmd.length > 0) {
+		try {
+			this.cmd.shift().call();
+		} catch (error) {
+			utils.logError('Error processing Renderer command: ', error);
+		}
+	}
 };
 
 /**
@@ -88,8 +88,9 @@ Renderer.prototype.process = function() {
  * @param {Object} renderer Renderer object installed by adapter
  * @returns {Boolean}
  */
-export function isRendererRequired(renderer) {
-  return !!(renderer && renderer.url);
+export function isRendererRequired(renderer, bid) {
+	console.log('isRendererRequired called');
+	return !!(renderer && renderer.url && bid && bid.mediaType === 'video');
 }
 
 /**
@@ -98,13 +99,13 @@ export function isRendererRequired(renderer) {
  * @param {Object} bid Bid response
  */
 export function executeRenderer(renderer, bid) {
-  renderer.render(bid);
+	renderer.render(bid);
 }
 
 function isRendererDefinedOnAdUnit(adUnitCode) {
-  const adUnits = $$PREBID_GLOBAL$$.adUnits;
-  const adUnit = find(adUnits, adUnit => {
-    return adUnit.code === adUnitCode;
-  });
-  return !!(adUnit && adUnit.renderer && adUnit.renderer.url && adUnit.renderer.render);
+	const adUnits = $$PREBID_GLOBAL$$.adUnits;
+	const adUnit = find(adUnits, adUnit => {
+		return adUnit.code === adUnitCode;
+	});
+	return !!(adUnit && adUnit.renderer && adUnit.renderer.url && adUnit.renderer.render);
 }
