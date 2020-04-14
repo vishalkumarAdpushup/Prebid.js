@@ -1,7 +1,7 @@
-import { loadExternalScript } from "./adloader.js";
-import * as utils from "./utils.js";
-import find from "core-js/library/fn/array/find.js";
-const moduleCode = "outstream";
+import { loadExternalScript } from './adloader.js';
+import * as utils from './utils.js';
+import find from 'core-js/library/fn/array/find.js';
+const moduleCode = 'outstream';
 
 /**
  * @typedef {object} Renderer
@@ -24,9 +24,9 @@ export function Renderer(options) {
   this.loaded = loaded;
   this.cmd = [];
   this.push = (func) => {
-    if (typeof func !== "function") {
+    if (typeof func !== 'function') {
       utils.logError(
-        "Commands given to Renderer.push must be wrapped in a function"
+        'Commands given to Renderer.push must be wrapped in a function'
       );
       return;
     }
@@ -75,7 +75,7 @@ Renderer.prototype.setEventHandlers = function (handlers) {
 };
 
 Renderer.prototype.handleVideoEvent = function ({ id, eventName }) {
-  if (typeof this.handlers[eventName] === "function") {
+  if (typeof this.handlers[eventName] === 'function') {
     this.handlers[eventName]();
   }
 
@@ -91,7 +91,7 @@ Renderer.prototype.process = function () {
     try {
       this.cmd.shift().call();
     } catch (error) {
-      utils.logError("Error processing Renderer command: ", error);
+      utils.logError('Error processing Renderer command: ', error);
     }
   }
 };
@@ -102,8 +102,8 @@ Renderer.prototype.process = function () {
  * @returns {Boolean}
  */
 export function isRendererRequired(renderer, bid) {
-  console.log("isRendererRequired called");
-  return !!(renderer && renderer.url && bid && bid.mediaType === "video");
+  // console.log('isRendererRequired called');
+  return !!(renderer && renderer.url && bid && bid.mediaType === 'video');
 }
 
 /**
