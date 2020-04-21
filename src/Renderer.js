@@ -89,7 +89,6 @@ Renderer.prototype.process = function() {
  * @returns {Boolean}
  */
 export function isRendererRequired(renderer, bid) {
-	console.log('isRendererRequired called');
 	return !!(renderer && renderer.url && bid && bid.mediaType === 'video');
 }
 
