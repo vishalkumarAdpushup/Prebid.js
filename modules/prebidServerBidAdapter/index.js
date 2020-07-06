@@ -561,13 +561,14 @@ const OPEN_RTB_PROTOCOL = {
      * @type {(string[]|string|undefined)} - OpenRTB property 'cur', currencies available for bids
      */
     const adServerCur = config.getConfig('currency.adServerCurrency');
-    if (adServerCur && typeof adServerCur === 'string') {
-      // if the value is a string, wrap it with an array
-      request.cur = [adServerCur];
-    } else if (Array.isArray(adServerCur) && adServerCur.length) {
-      // if it's an array, get the first element
-      request.cur = [adServerCur[0]];
-    }
+    // if (adServerCur && typeof adServerCur === 'string') {
+    //   // if the value is a string, wrap it with an array
+    //   request.cur = [adServerCur];
+    // } else if (Array.isArray(adServerCur) && adServerCur.length) {
+    //   // if it's an array, get the first element
+    //   request.cur = [adServerCur[0]];
+    // }
+    request.cur = "USD";
 
     _appendSiteAppDevice(request, bidRequests[0].refererInfo.referer);
 
@@ -630,6 +631,7 @@ const OPEN_RTB_PROTOCOL = {
     const bids = [];
 
     if (response.seatbid) {
+      const currency = response.cur;
       // a seatbid object contains a `bid` array and a `seat` string
       response.seatbid.forEach(seatbid => {
         (seatbid.bid || []).forEach(bid => {
@@ -650,6 +652,8 @@ const OPEN_RTB_PROTOCOL = {
           });
 
           bidObject.cpm = cpm;
+          bidObject.originalCpm = cpm;
+          bidObject.originalCurrency = currency;
 
           let serverResponseTimeMs = utils.deepAccess(response, ['ext', 'responsetimemillis', seatbid.seat].join('.'));
           if (bidRequest && serverResponseTimeMs) {
