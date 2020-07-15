@@ -1,32 +1,28 @@
-
 const allowedModules = require("./allowedModules");
 
 module.exports = {
-  "env": {
-    "browser": true,
-    "commonjs": true
+  env: {
+    browser: true,
+    commonjs: true,
   },
-  "settings": {
+  settings: {
     "import/resolver": {
-      "node": {
-        "moduleDirectory": ["node_modules", "./"]
-      }
-    }
+      node: {
+        moduleDirectory: ["node_modules", "./"],
+      },
+    },
   },
-  "extends": "standard",
-  "plugins": [
-    "prebid",
-    "import"
-  ],
-  "globals": {
-    "$$PREBID_GLOBAL$$": false
+  extends: "standard",
+  plugins: ["prebid"],
+  globals: {
+    $$PREBID_GLOBAL$$: false,
   },
-  "parserOptions": {
-    "sourceType": "module"
+  parserOptions: {
+    sourceType: "module",
   },
-  "rules": {
+  rules: {
     "comma-dangle": "off",
-    "semi": "off",
+    semi: "off",
     "space-before-function-paren": "off",
     "import/extensions": ["error", "ignorePackages"],
 
@@ -34,17 +30,17 @@ module.exports = {
     // Violations of these styles should be fixed, and the exceptions removed over time.
     //
     // See Issue #1111.
-    "eqeqeq": "off",
+    eqeqeq: "off",
     "no-return-assign": "off",
     "no-throw-literal": "off",
     "no-undef": 2,
     "no-useless-escape": "off",
-    "no-console": "error"
+    "no-console": "error",
   },
-  "overrides": Object.keys(allowedModules).map((key) => ({
-    "files": key + "/**/*.js",
-    "rules": {
-      "prebid/validate-imports": ["error", allowedModules[key]]
-    }
-  }))
+  overrides: Object.keys(allowedModules).map((key) => ({
+    files: key + "/**/*.js",
+    rules: {
+      "prebid/validate-imports": ["error", allowedModules[key]],
+    },
+  })),
 };

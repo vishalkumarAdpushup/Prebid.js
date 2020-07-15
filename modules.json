@@ -11,5 +11,6 @@
   "aolBidAdapter",
   "consumableBidAdapter",
   "rhythmoneBidAdapter",
+  "openxBidAdapter",
   "schain"
 ]
