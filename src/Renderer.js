@@ -97,8 +97,8 @@ Renderer.prototype.process = function() {
  * @param {Object} renderer Renderer object installed by adapter
  * @returns {Boolean}
  */
-export function isRendererRequired(renderer) {
-  return !!(renderer && renderer.url);
+export function isRendererRequired(renderer, bid) {
+  return !!(renderer && renderer.url && bid && bid.mediaType === 'video');
 }
 
 /**
