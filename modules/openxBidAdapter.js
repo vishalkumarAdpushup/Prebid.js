@@ -99,7 +99,11 @@ function generateDefaultSyncUrl(gdprConsent, uspConsent) {
 }
 
 function isVideoRequest(bidRequest) {
-  return (utils.deepAccess(bidRequest, 'mediaTypes.video') && !utils.deepAccess(bidRequest, 'mediaTypes.banner')) || bidRequest.mediaType === VIDEO;
+  return utils.deepAccess(bidRequest, 'mediaTypes.video') || bidRequest.mediaType === VIDEO;
+}
+
+function isBannerRequest(bidRequest) {
+	return utils.deepAccess(bidRequest, 'mediaTypes.banner') || bidRequest.mediaType === BANNER;
 }
 
 function createBannerBidResponses(oxResponseObj, {bids, startTime}) {
@@ -195,12 +199,10 @@ function formatCustomParms(customKey, customParams) {
 
 function partitionByVideoBids(bidRequests) {
   return bidRequests.reduce(function (acc, bid) {
-    // Fallback to banner ads if nothing specified
-    if (isVideoRequest(bid)) {
-      acc[0].push(bid);
-    } else {
-      acc[1].push(bid);
-    }
+    // Updated to support both video and banner formats together
+    if (isVideoRequest(bid)) acc[0].push(bid);
+    if (isBannerRequest(bid)) acc[1].push(bid);
+
     return acc;
   }, [[], []]);
 }
