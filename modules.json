@@ -12,5 +12,6 @@
   "consumableBidAdapter",
   "rhythmoneBidAdapter",
   "openxBidAdapter",
+  "nobidBidAdapter",
   "schain"
 ]
