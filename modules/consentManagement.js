@@ -383,9 +383,9 @@ function cmpFailed(errMsg, hookConfig, extraArgs) {
   clearTimeout(hookConfig.timer);
 
   // still set the consentData to undefined when there is a problem as per config options
-  if (allowAuction.value) {
-		storeConsentData(undefined);
-	}
+  if (allowAuction.value && cmpVersion === 1) {
+    storeConsentData(undefined);
+  }
   exitModule(errMsg, hookConfig, extraArgs);
 }
 
@@ -440,7 +440,7 @@ function exitModule(errMsg, hookConfig, extraArgs) {
     let nextFn = hookConfig.nextFn;
 
     if (errMsg) {
-      if (allowAuction.value && cmpVersion === 1) {
+      if (allowAuction.value) {
         utils.logWarn(errMsg + ` 'allowAuctionWithoutConsent' activated.`, extraArgs);
         nextFn.apply(context, args);
       } else {
