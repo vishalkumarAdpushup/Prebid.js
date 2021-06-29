@@ -383,9 +383,9 @@ function cmpFailed(errMsg, hookConfig, extraArgs) {
   clearTimeout(hookConfig.timer);
 
   // still set the consentData to undefined when there is a problem as per config options
-  if (allowAuction.value && cmpVersion === 1) {
-    storeConsentData(undefined);
-  }
+  if (allowAuction.value) {
+		storeConsentData(undefined);
+	}
   exitModule(errMsg, hookConfig, extraArgs);
 }
 
