@@ -13,5 +13,10 @@
   "rhythmoneBidAdapter",
   "openxBidAdapter",
   "nobidBidAdapter",
+  "onetagBidAdapter",
+  "sharethroughBidAdapter",
+  "sonobiBidAdapter",
+  "yieldmoBidAdapter",
+  "smartadserverBidAdapter",
   "schain"
 ]
