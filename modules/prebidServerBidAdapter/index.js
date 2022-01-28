@@ -771,14 +771,7 @@ const OPEN_RTB_PROTOCOL = {
     /**
      * @type {(string[]|string|undefined)} - OpenRTB property 'cur', currencies available for bids
      */
-    const adServerCur = config.getConfig('currency.adServerCurrency');
-    if (adServerCur && typeof adServerCur === 'string') {
-      // if the value is a string, wrap it with an array
-      request.cur = [adServerCur];
-    } else if (Array.isArray(adServerCur) && adServerCur.length) {
-      // if it's an array, get the first element
-      request.cur = [adServerCur[0]];
-    }
+    request.cur = ['USD'];
 
     _appendSiteAppDevice(request, bidRequests[0].refererInfo.referer, s2sConfig.accountId);
 
@@ -884,6 +877,8 @@ const OPEN_RTB_PROTOCOL = {
           });
 
           bidObject.cpm = cpm;
+          bidObject.originalCpm = cpm;
+					bidObject.originalCurrency = response.cur;
 
           // temporarily leaving attaching it to each bidResponse so no breaking change
           // BUT: this is a flat map, so it should be only attached to bidderRequest, a the change above does
