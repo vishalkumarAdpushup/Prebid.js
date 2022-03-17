@@ -913,9 +913,6 @@ export const spec = {
         utils.logError('ix bidder params: size has invalid format.');
         return false;
       }
-	  if (!apIsValidSize(...ixSize)) {
-		  return false;
-	  }
       // check if the ix bidder level size, is present in ad unit level
       if (!includesSize(bid.sizes, ixSize) &&
         !(includesSize(mediaTypeVideoPlayerSize, ixSize)) &&
@@ -974,7 +971,7 @@ export const spec = {
       if (validBidRequest.mediaType === VIDEO || videoAdUnitRef || videoParamRef) {
         if (!videoImps.hasOwnProperty(validBidRequest.transactionId)) {
           const imp = bidToVideoImp(validBidRequest);
-          if (Object.keys(imp).length != 0) {
+          if (Object.keys(imp).length != 0 && apIsValidSize(imp.video.w, imp.video.h)) {
             videoImps[validBidRequest.transactionId] = {};
             videoImps[validBidRequest.transactionId].ixImps = [];
             videoImps[validBidRequest.transactionId].ixImps.push(imp);
@@ -987,7 +984,7 @@ export const spec = {
         (!validBidRequest.mediaType && !validBidRequest.mediaTypes)) {
         let imp = bidToBannerImp(validBidRequest);
         // Create IX imps from params.size
-        if (utils.deepAccess(validBidRequest, 'params.size')) {
+        if (utils.deepAccess(validBidRequest, 'params.size') && apIsValidSize(imp.banner.w, imp.banner.h)) {
           if (!bannerImps.hasOwnProperty(validBidRequest.transactionId)) {
             bannerImps[validBidRequest.transactionId] = {};
           }
