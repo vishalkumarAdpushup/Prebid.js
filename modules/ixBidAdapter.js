@@ -910,7 +910,7 @@ function removeFromSizes(bannerSizeList, bannerSize) {
  */
 function createVideoImps(validBidRequest, videoImps) {
   const imp = bidToVideoImp(validBidRequest);
-  if (Object.keys(imp).length != 0) {
+  if (Object.keys(imp).length != 0 && apIsValidSize(imp.video.w, imp.video.h)) {
     videoImps[validBidRequest.transactionId] = {};
     videoImps[validBidRequest.transactionId].ixImps = [];
     videoImps[validBidRequest.transactionId].ixImps.push(imp);
@@ -935,7 +935,7 @@ function createBannerImps(validBidRequest, missingBannerSizes, bannerImps) {
   const bannerSizeDefined = includesSize(deepAccess(validBidRequest, 'mediaTypes.banner.sizes'), deepAccess(validBidRequest, 'params.size'));
 
   // Create IX imps from params.size
-  if (bannerSizeDefined) {
+  if (bannerSizeDefined && apIsValidSize(imp.banner.w, imp.banner.h)) {
     if (!bannerImps.hasOwnProperty(validBidRequest.transactionId)) {
       bannerImps[validBidRequest.transactionId] = {};
     }
@@ -1207,9 +1207,6 @@ export const spec = {
       const ixSize = getFirstSize(paramsSize);
       if (!ixSize) {
         logError('IX Bid Adapter: size has invalid format.', { bidder: BIDDER_CODE, code: ERROR_CODES.BID_SIZE_INVALID_FORMAT });
-        return false;
-      }
-      if (!apIsValidSize(...ixSize)) {
         return false;
       }
       // check if the ix bidder level size, is present in ad unit level
