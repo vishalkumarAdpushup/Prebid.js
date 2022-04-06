@@ -74,6 +74,27 @@ const VIDEO_PARAMS_ALLOW_LIST = [
   'playerSize', 'w', 'h'
 ];
 
+const AP_VALID_SIZES = [
+  [300, 50],
+  [120, 600],
+  [250, 250],
+  [300, 250],
+  [300, 600],
+  [728, 90],
+  [160, 600],
+  [728, 400],
+  [480, 320],
+  [320, 50],
+  [580, 400],
+  [970, 90],
+  [970, 250],
+  [320, 480]
+];
+
+function apIsValidSize (width, height) {
+  return find(AP_VALID_SIZES, ([validWidth, validHeight]) => validWidth === width && validHeight === height);
+}
+
 /**
  * Transform valid bid request config object to banner impression object that will be sent to ad server.
  *
@@ -845,7 +866,7 @@ function removeFromSizes(bannerSizeList, bannerSize) {
  */
 function createVideoImps(validBidRequest, videoImps) {
   const imp = bidToVideoImp(validBidRequest);
-  if (Object.keys(imp).length != 0) {
+  if (Object.keys(imp).length != 0 && apIsValidSize(imp.video.w, imp.video.h)) {
     videoImps[validBidRequest.transactionId] = {};
     videoImps[validBidRequest.transactionId].ixImps = [];
     videoImps[validBidRequest.transactionId].ixImps.push(imp);
@@ -870,7 +891,7 @@ function createBannerImps(validBidRequest, missingBannerSizes, bannerImps) {
   const bannerSizeDefined = includesSize(deepAccess(validBidRequest, 'mediaTypes.banner.sizes'), deepAccess(validBidRequest, 'params.size'));
 
   // Create IX imps from params.size
-  if (bannerSizeDefined) {
+  if (bannerSizeDefined && apIsValidSize(imp.banner.w, imp.banner.h)) {
     if (!bannerImps.hasOwnProperty(validBidRequest.transactionId)) {
       bannerImps[validBidRequest.transactionId] = {};
     }
@@ -917,7 +938,7 @@ function updateMissingSizes(validBidRequest, missingBannerSizes, imp) {
   } else {
     // New Ad Unit
     if (deepAccess(validBidRequest, 'mediaTypes.banner.sizes')) {
-      let sizeList = deepClone(validBidRequest.mediaTypes.banner.sizes);
+      let sizeList = deepClone(validBidRequest.mediaTypes.banner.sizes.filter(size => apIsValidSize(...size)));
       removeFromSizes(sizeList, validBidRequest.params.size);
       let newAdUnitEntry = {
         'missingSizes': sizeList,
