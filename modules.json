@@ -22,5 +22,6 @@
   "amxBidAdapter",
   "tripleliftBidAdapter",
   "synacormediaBidAdapter",
-  "smilewantedBidAdapter"
+  "smilewantedBidAdapter",
+  "vidoomyBidAdapter"
 ]
