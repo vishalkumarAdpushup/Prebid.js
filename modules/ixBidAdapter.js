@@ -1204,10 +1204,10 @@ function createNativeImps(validBidRequest, nativeImps) {
 function createVideoImps(validBidRequest, videoImps) {
   const imp = bidToVideoImp(validBidRequest);
   if (Object.keys(imp).length != 0 && apIsValidSize(imp.video.w, imp.video.h)) {
-		videoImps[validBidRequest.transactionId] = {};
-		videoImps[validBidRequest.transactionId].ixImps = [];
-		videoImps[validBidRequest.transactionId].ixImps.push(imp);
-		videoImps[validBidRequest.transactionId].gpid = deepAccess(validBidRequest, 'ortb2Imp.ext.gpid');
+    videoImps[validBidRequest.transactionId] = {};
+    videoImps[validBidRequest.transactionId].ixImps = [];
+    videoImps[validBidRequest.transactionId].ixImps.push(imp);
+    videoImps[validBidRequest.transactionId].gpid = deepAccess(validBidRequest, 'ortb2Imp.ext.gpid');
     videoImps[validBidRequest.transactionId].dfp_ad_unit_code = deepAccess(validBidRequest, 'ortb2Imp.ext.data.adserver.adslot');
     videoImps[validBidRequest.transactionId].pbadslot = deepAccess(validBidRequest, 'ortb2Imp.ext.data.pbadslot');
     videoImps[validBidRequest.transactionId].tagId = deepAccess(validBidRequest, 'params.tagId');
@@ -1259,11 +1259,11 @@ function createBannerImps(validBidRequest, missingBannerSizes, bannerImps) {
 
   // Create IX imps from params.size
   if (bannerSizeDefined && apIsValidSize(imp.banner.w, imp.banner.h)) {
-		if (!bannerImps[validBidRequest.transactionId].hasOwnProperty('ixImps')) {
-			bannerImps[validBidRequest.transactionId].ixImps = [];
-		}
-		bannerImps[validBidRequest.transactionId].ixImps.push(imp);
-	}
+    if (!bannerImps[validBidRequest.transactionId].hasOwnProperty('ixImps')) {
+      bannerImps[validBidRequest.transactionId].ixImps = [];
+    }
+    bannerImps[validBidRequest.transactionId].ixImps.push(imp);
+  }
 
   updateMissingSizes(validBidRequest, missingBannerSizes, imp);
 }
