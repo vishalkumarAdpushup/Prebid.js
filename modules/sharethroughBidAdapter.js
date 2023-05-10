@@ -88,38 +88,41 @@ export const sharethroughAdapterSpec = {
       const gpid = deepAccess(bidReq, 'ortb2Imp.ext.gpid', deepAccess(bidReq, 'ortb2Imp.ext.data.pbadslot'));
       if (gpid) impression.ext.gpid = gpid;
 
-      const videoRequest = deepAccess(bidReq, 'mediaTypes.video');
+      // Disabling Outstream request temporarily
 
-      if (videoRequest) {
-        // default playerSize, only change this if we know width and height are properly defined in the request
-        let [w, h] = [640, 360];
-        if (videoRequest.playerSize && videoRequest.playerSize[0] && videoRequest.playerSize[1]) {
-          [w, h] = videoRequest.playerSize;
-        }
+      const bannerRequest = deepAccess(bidReq, 'mediaTypes.banner');
 
-        impression.video = {
-          pos: nullish(videoRequest.pos, 0),
-          topframe: inIframe() ? 0 : 1,
-          skip: nullish(videoRequest.skip, 0),
-          linearity: nullish(videoRequest.linearity, 1),
-          minduration: nullish(videoRequest.minduration, 5),
-          maxduration: nullish(videoRequest.maxduration, 60),
-          playbackmethod: videoRequest.playbackmethod || [2],
-          api: getVideoApi(videoRequest),
-          mimes: videoRequest.mimes || ['video/mp4'],
-          protocols: getVideoProtocols(videoRequest),
-          w,
-          h,
-          startdelay: nullish(videoRequest.startdelay, 0),
-          skipmin: nullish(videoRequest.skipmin, 0),
-          skipafter: nullish(videoRequest.skipafter, 0),
-          placement: videoRequest.context === 'instream' ? 1 : +deepAccess(videoRequest, 'placement', 4),
-        };
+      // if (videoRequest) {
+      //   // default playerSize, only change this if we know width and height are properly defined in the request
+      //   let [w, h] = [640, 360];
+      //   if (videoRequest.playerSize && videoRequest.playerSize[0] && videoRequest.playerSize[1]) {
+      //     [w, h] = videoRequest.playerSize;
+      //   }
 
-        if (videoRequest.delivery) impression.video.delivery = videoRequest.delivery;
-        if (videoRequest.companiontype) impression.video.companiontype = videoRequest.companiontype;
-        if (videoRequest.companionad) impression.video.companionad = videoRequest.companionad;
-      } else {
+      //   impression.video = {
+      //     pos: nullish(videoRequest.pos, 0),
+      //     topframe: inIframe() ? 0 : 1,
+      //     skip: nullish(videoRequest.skip, 0),
+      //     linearity: nullish(videoRequest.linearity, 1),
+      //     minduration: nullish(videoRequest.minduration, 5),
+      //     maxduration: nullish(videoRequest.maxduration, 60),
+      //     playbackmethod: videoRequest.playbackmethod || [2],
+      //     api: getVideoApi(videoRequest),
+      //     mimes: videoRequest.mimes || ['video/mp4'],
+      //     protocols: getVideoProtocols(videoRequest),
+      //     w,
+      //     h,
+      //     startdelay: nullish(videoRequest.startdelay, 0),
+      //     skipmin: nullish(videoRequest.skipmin, 0),
+      //     skipafter: nullish(videoRequest.skipafter, 0),
+      //     placement: videoRequest.context === 'instream' ? 1 : +deepAccess(videoRequest, 'placement', 4),
+      //   };
+
+      //   if (videoRequest.delivery) impression.video.delivery = videoRequest.delivery;
+      //   if (videoRequest.companiontype) impression.video.companiontype = videoRequest.companiontype;
+      //   if (videoRequest.companionad) impression.video.companionad = videoRequest.companionad;
+      // } else {
+      if (bannerRequest) {
         impression.banner = {
           pos: deepAccess(bidReq, 'mediaTypes.banner.pos', 0),
           topframe: inIframe() ? 0 : 1,
