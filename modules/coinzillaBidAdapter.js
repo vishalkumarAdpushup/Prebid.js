@@ -3,6 +3,7 @@ import {registerBidder} from '../src/adapters/bidderFactory.js';
 
 const BIDDER_CODE = 'coinzilla';
 const ENDPOINT_URL = 'https://request.czilladx.com/serve/request.php';
+const DEFAULT_TTL =30;
 
 export const spec = {
   code: BIDDER_CODE,
@@ -77,7 +78,7 @@ export const spec = {
         dealId: dealId,
         currency: currency,
         netRevenue: netRevenue,
-        ttl: bidRequest.timeout,
+        ttl: response.timeout || DEFAULT_TTL,
         referrer: referrer,
         ad: response.ad,
         mediaType: response.mediaType,
