@@ -107,8 +107,13 @@ export const spec = {
       postBody.imp.push(getImp(bid, id));
       setConsentStrings(postBody, bidderRequest);
       setOrtb2Parameters(postBody, bidderRequest?.ortb2);
-
-      const urlParameters = parseUrl(getWindowTop().location.href).search;
+      //On AMP setup we can't access top window
+      let urlParameters;
+      try {
+        urlParameters = parseUrl(getWindowTop().location.href).search;
+      } catch (error) {
+        urlParameters = parseUrl(window?.context?.location?.href).search;
+      }
       const isTest = urlParameters['pbs'] && urlParameters['pbs'] === 'test';
       const params = bid.params;
 
@@ -345,14 +350,20 @@ function getPlacementId(bid) {
   const placementId = getBidIdParameter('placement_id', bid.params);
   if (!groupId) return placementId;
 
-  let windowTop = getTopWindow(window);
+  // let windowTop = getTopWindow(window);
   let sizes = [];
   if (bid.mediaTypes) {
     if (bid.mediaTypes.banner) sizes = bid.mediaTypes.banner.sizes;
     if (bid.mediaTypes.video) sizes = [bid.mediaTypes.video.playerSize];
   };
 
-  const host = (windowTop && windowTop.location && windowTop.location.host) || '';
+  let host;
+  try {
+    host = parseUrl(getWindowTop().location.href).host;
+  } catch (error) {
+    host = parseUrl(window?.context?.location?.href).host;
+  }
+  // const host = (windowTop && windowTop.location && windowTop.location.host) || '';
   return `g${groupId};${sizes.map(size => size.join('x')).join('|')};${host}`;
 }
 

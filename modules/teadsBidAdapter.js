@@ -45,7 +45,17 @@ export const spec = {
    */
   buildRequests: function(validBidRequests, bidderRequest) {
     const bids = validBidRequests.map(buildRequestObject);
-    const topWindow = window.top;
+
+    function safeAccess(props) {
+      try {
+          const obj = window.top;
+          return props.reduce((acc, prop) => acc?.[prop], obj);
+      } catch (e) {
+          const obj = window;
+          return props.reduce((acc, prop) => acc?.[prop], obj);
+      }
+    }
+  
 
     const payload = {
       referrer: getReferrerInfo(bidderRequest),
@@ -57,11 +67,11 @@ export const spec = {
       data: bids,
       deviceWidth: screen.width,
       screenOrientation: screen.orientation?.type,
-      historyLength: topWindow.history?.length,
-      viewportHeight: topWindow.visualViewport?.height,
-      viewportWidth: topWindow.visualViewport?.width,
-      hardwareConcurrency: topWindow.navigator?.hardwareConcurrency,
-      deviceMemory: topWindow.navigator?.deviceMemory,
+      historyLength: safeAccess(['history', 'length']),
+      viewportHeight: safeAccess(['visualViewport', 'height']),
+      viewportWidth: safeAccess(['visualViewport', 'width']),
+      hardwareConcurrency: safeAccess(['navigator','hardwareConcurrency']),
+      deviceMemory: safeAccess(['navigator','deviceMemory']),
       hb_version: '$prebid.version$',
       ...getSharedViewerIdParameters(validBidRequests),
       ...getFirstPartyTeadsIdParameter(validBidRequests)
