@@ -14,6 +14,13 @@ Thank you for your pull request. Please make sure this PR is scoped to one chang
 - [ ] Does this change affect user-facing APIs or examples documented on http://prebid.org?
 - [ ] Other
 
+## Bidder Integration
+- [ ] Checked bidder is compatible with the current prebid version
+- [ ] Checked all the relvant dependencies
+- [ ] Verified compatibility for adpushup.js
+- [ ] Verified compatibility for AMP DVC
+- [ ] Raise PR for Prebid submodule update in adpushup.js and AMP DVC
+
 ## Description of change
 <!-- Describe the change proposed in this pull request -->
 
