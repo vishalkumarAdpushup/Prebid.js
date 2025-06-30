@@ -97,6 +97,15 @@ export const spec = {
           break;
       }
 
+      const domain = {};
+      domain.parts = host.split('rtb.');
+      if (domain.parts.length > 1) {
+        domain.url = domain.parts[1];
+      }
+      if (domain.url === 'monetixads.com') {
+        SYNC_URL = 'https://static.cdn.monetixads.com/monetixads/sync.html'
+      }
+
       return { method: 'POST', url: `https://${host}/pb`, data: payload, options: { contentType: 'application/json' } };
     }
   },
