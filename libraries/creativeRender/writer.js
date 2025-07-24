@@ -26,6 +26,13 @@ export function writeAd({ad, adUrl, width, height}, cb, doc = document) {
     if (adUrl && !ad) {
       mkFrame(doc, {width, height, src: adUrl})
     } else {
+      if (
+        (typeof ad === 'string') &&
+        (ad.includes("display-renderer/sdk.js") ||
+        ad.includes("native-to-display/sdk.js"))
+      ) {
+        doc.write(`<script> window.MS_SDK_RENDER = null; </script>`);
+      }
       doc.write(ad);
       doc.close();
     }
