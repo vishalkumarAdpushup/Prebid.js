@@ -30,7 +30,8 @@ const BIDDER_CODE = 'admatic';
 export const spec = {
   code: BIDDER_CODE,
   aliases: [
-    {code: 'pixad'}
+    {code: 'pixad'}, 
+    { code: 'monetixads' }
   ],
   supportedMediaTypes: [BANNER, VIDEO, NATIVE],
   /** f
